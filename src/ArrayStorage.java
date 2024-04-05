@@ -2,45 +2,46 @@
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private int count = 0; //количество объектов в массиве,
+
+    //количество резюме в массиве
+    private int count = 0;
     Resume[] storage = new Resume[10000];
 
     void clear() {
-        for (Resume r : storage) {
-            r = null;
+        for (int i = 0; i < count; i++) {
+            storage[i] = null;
         }
-        setCount(0);
+        count = 0;
     }
 
     void save(Resume r) {
-        int i = size();
 
-        if (i < 10000) {
-            storage[i] = r;
-            setCount(++i);
+        if (count < 10000) {
+            storage[count] = r;
+            count++;
         }
     }
 
     Resume get(String uuid) {
-        int i;
+        int i = 0;
 
-        for (i = 0; (i < size() && !storage[i].uuid.equals(uuid)); i++) {
+        while (i < count && !storage[i].uuid.equals(uuid)) {
+            i++;
         }
-        return (i < size()) ? storage[i] : null;
+
+        return (i < count) ? storage[i] : null;
     }
 
     void delete(String uuid) {
-        int i;
+        int i = 0;
 
-        for (i = 0; (i < size() && !storage[i].uuid.equals(uuid)); i++) {
+        while (i < count && !storage[i].uuid.equals(uuid)) {
+            i++;
         }
-        if (i < size()) {
-            System.arraycopy(storage, i+1, storage, i, size()-i-1);
-            //while (i < (size() - 1)) {
-            //    storage[i] = storage[i + 1];
-            //    i++;
-            //}
-            setCount(size() - 1);
+
+        if (i < count) {
+            System.arraycopy(storage, i + 1, storage, i, count - i - 1);
+            count--;
         }
     }
 
@@ -48,23 +49,14 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        Resume[] resumes = new Resume[size()];
+        Resume[] resumes = new Resume[count];
 
-        System.arraycopy(storage, 0, resumes, 0, size());
+        System.arraycopy(storage, 0, resumes, 0, count);
         return resumes;
     }
 
     int size() {
-        // в текущей реализации используется переменная count, учитывая требование, что в элементах от 0 до size-1 отсутствуют null)
-        // другой вариант реализации - подсчитвыать количестов объектов (не null) в массиве каждый раз, не используя count
-        return getCount();
-    }
-
-    private int getCount() {
         return count;
     }
 
-    private void setCount(int count) {
-        this.count = count;
-    }
 }
