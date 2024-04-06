@@ -15,7 +15,6 @@ public class ArrayStorage {
     }
 
     void save(Resume r) {
-
         if (count < 10000) {
             storage[count] = r;
             count++;
@@ -26,10 +25,13 @@ public class ArrayStorage {
         int i = 0;
 
         while (i < count && !storage[i].uuid.equals(uuid)) {
+            if (storage[i].uuid.equals(uuid)) {
+                return storage[i];
+            }
             i++;
         }
 
-        return (i < count) ? storage[i] : null;
+        return null;
     }
 
     void delete(String uuid) {
@@ -40,6 +42,7 @@ public class ArrayStorage {
         }
 
         if (i < count) {
+            storage[i] = null;
             System.arraycopy(storage, i + 1, storage, i, count - i - 1);
             count--;
         }
