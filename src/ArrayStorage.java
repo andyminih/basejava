@@ -22,13 +22,10 @@ public class ArrayStorage {
     }
 
     Resume get(String uuid) {
-        int i = 0;
-
-        while (i < count && !storage[i].uuid.equals(uuid)) {
+        for (int i = 0; i < count; i++){
             if (storage[i].uuid.equals(uuid)) {
                 return storage[i];
             }
-            i++;
         }
 
         return null;
@@ -37,14 +34,14 @@ public class ArrayStorage {
     void delete(String uuid) {
         int i = 0;
 
-        while (i < count && !storage[i].uuid.equals(uuid)) {
+        while (i < count) {
+            if (storage[i].uuid.equals(uuid)) {
+                System.arraycopy(storage, i + 1, storage, i, count - i - 1);
+                storage[count-1] = null;
+                count--;
+                return;
+            }
             i++;
-        }
-
-        if (i < count) {
-            storage[i] = null;
-            System.arraycopy(storage, i + 1, storage, i, count - i - 1);
-            count--;
         }
     }
 
