@@ -18,7 +18,7 @@ public class ArrayStorage {
 //        for (int i = 0; i < count; i++) {
 //            storage[i] = null;
 //        }
-        Arrays.fill(storage, 0, count-1, null);
+        Arrays.fill(storage, 0, count - 1, null);
         count = 0;
     }
 
@@ -26,8 +26,7 @@ public class ArrayStorage {
         if (count < 10000) {
             storage[count] = r;
             count++;
-        }
-        else {
+        } else {
             System.out.println("Невозможно добавлить резюме. Хранилище переполнено.");
         }
     }
@@ -40,7 +39,7 @@ public class ArrayStorage {
 //        }
 //        return null;*/
         Resume r = find(uuid);
-        if (r==null){
+        if (r == null) {
             System.out.println("Резюме не найдено.");
         }
         return r;
@@ -65,10 +64,9 @@ public class ArrayStorage {
             }
         }*/
         Resume r = find(resume.getUuid());
-        if (r==null){
+        if (r == null) {
             System.out.println("Резюме не найдено.");
-        }
-        else {
+        } else {
             r = resume;
         }
     }
