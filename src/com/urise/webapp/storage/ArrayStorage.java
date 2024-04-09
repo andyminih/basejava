@@ -10,7 +10,8 @@ import java.util.Arrays;
 
 public class ArrayStorage {
 
-    private Resume[] storage = new Resume[10000];
+    private final Resume[] storage = new Resume[10000];
+
     //количество резюме в массиве
     private int count = 0;
 
