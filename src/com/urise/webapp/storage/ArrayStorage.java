@@ -22,8 +22,7 @@ public class ArrayStorage {
     public void save(Resume r) {
         if (size == STORAGE_LIMIT) {
             System.out.println("Невозможно добавлить резюме. Хранилище переполнено.");
-        }
-        else if (findIndex(r.getUuid())>=0) {
+        } else if (findIndex(r.getUuid()) >= 0) {
             System.out.println("Невозможно добавлить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
         } else {
             storage[size] = r;
@@ -33,7 +32,7 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         int index = findIndex(uuid);
-        if (index<0) {
+        if (index < 0) {
             System.out.println("Резюме не найдено.");
             return null;
         }
@@ -42,7 +41,7 @@ public class ArrayStorage {
 
     public void delete(String uuid) {
         int index = findIndex(uuid);
-        if (index>=0) {
+        if (index >= 0) {
             size--;
             storage[size] = null;
         }
@@ -50,7 +49,7 @@ public class ArrayStorage {
 
     public void update(Resume resume) {
         int index = findIndex(resume.getUuid());
-        if (index<0) {
+        if (index < 0) {
             System.out.println("Резюме не найдено.");
         } else {
             storage[index] = resume;
