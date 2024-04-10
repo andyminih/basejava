@@ -10,65 +10,52 @@ import java.util.Arrays;
 
 public class ArrayStorage {
 
-    private final Resume[] storage = new Resume[10000];
-
-    //количество резюме в массиве
+    private final int STORAGE_LIMIT = 10000;
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int count = 0;
 
     public void clear() {
-//        for (int i = 0; i < count; i++) {
-//            storage[i] = null;
-//        }
         Arrays.fill(storage, 0, count - 1, null);
         count = 0;
     }
 
     public void save(Resume r) {
-        if (count < 10000) {
+        if (count == STORAGE_LIMIT) {
+            System.out.println("Невозможно добавлить резюме. Хранилище переполнено.");
+        }
+        else if (findIndex(r.getUuid())>=0) {
+            System.out.println("Невозможно добавлить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
+        } else {
             storage[count] = r;
             count++;
-        } else {
-            System.out.println("Невозможно добавлить резюме. Хранилище переполнено.");
         }
     }
 
     public Resume get(String uuid) {
-//     /*   for (int i = 0; i < count; i++) {
-//            if (storage[i].getUuid().equals(uuid)) {
-//                return storage[i];
-//            }
-//        }
-//        return null;*/
-        Resume r = find(uuid);
-        if (r == null) {
+        int i = findIndex(uuid);
+        if (i<0) {
             System.out.println("Резюме не найдено.");
         }
-        return r;
+        return storage[i];
     }
 
     public void delete(String uuid) {
-        for (int i = 0; i < count; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                System.arraycopy(storage, i + 1, storage, i, count - i - 1);
-                storage[count - 1] = null;
-                count--;
-                return;
+        int i = findIndex(uuid);
+        if (i>=0) {
+            if (i<(count-1)) {
+                storage[i] = storage[count-1];
             }
+            storage[count-1] = null;
+            count--;
         }
     }
 
     public void update(Resume resume) {
-        /*for (int i=0; i<count; i++) {
-            if (storage[i].getUuid().equals((resume.getUuid()))) {
-                storage[i] = resume;
-                return;
-            }
-        }*/
-        Resume r = find(resume.getUuid());
-        if (r == null) {
+        int i = findIndex(resume.getUuid());
+        if (i<0) {
             System.out.println("Резюме не найдено.");
         } else {
-            r = resume;
+            storage[i] = resume;
         }
     }
 
@@ -83,13 +70,13 @@ public class ArrayStorage {
         return count;
     }
 
-    private Resume find(String uuid) {
+    private int findIndex(String uuid) {
         for (int i = 0; i < count; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                return storage[i];
+                return i;
             }
         }
-        return null;
+        return -1;
     }
 
 }
