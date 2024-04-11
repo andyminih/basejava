@@ -2,43 +2,41 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-/**
- * Array based storage for Resumes
- */
+import java.util.Arrays;
 
-public class ArrayStorage extends AbstractArrayStorage {
+public class SortedArrayStorage extends AbstractArrayStorage {
 
+    @Override
+    protected int findIndex(String uuid) {
+        return Arrays.binarySearch(storage, 0, size, new Resume(uuid));
+    }
+
+    @Override
     public void save(Resume r) {
         if (size == STORAGE_LIMIT) {
             System.out.println("Невозможно добавить резюме. Хранилище переполнено.");
-        } else if (findIndex(r.getUuid()) >= 0) {
+            return;
+        }
+
+        int index = findIndex(r.getUuid());
+        if (index >= 0) {
             System.out.println("Невозможно добавить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
         } else {
-            storage[size] = r;
+            index = -index - 1;
+            System.arraycopy(storage, index, storage, index + 1, size - index);
+            storage[index] = r;
             size++;
         }
     }
 
+    @Override
     public void delete(String uuid) {
         final int index = findIndex(uuid);
         if (index >= 0) {
+            System.arraycopy(storage, index + 1, storage, index, size - index - 1);
             size--;
-            storage[index] = storage[size];
             storage[size] = null;
         }
-    }
-
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-
-    protected int findIndex(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
 }
