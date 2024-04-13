@@ -14,12 +14,12 @@ public abstract class AbstractArrayStorage implements Storage {
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-    public void clear() {
+    public final void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    public Resume get(String uuid) {
+    public final Resume get(String uuid) {
         final int index = findIndex(uuid);
         if (index < 0) {
             System.out.println("Резюме " + uuid + " не найдено.");
@@ -28,7 +28,7 @@ public abstract class AbstractArrayStorage implements Storage {
         return storage[index];
     }
 
-    public void update(Resume resume) {
+    public final void update(Resume resume) {
         final int index = findIndex(resume.getUuid());
         if (index < 0) {
             System.out.println("Резюме не найдено.");
@@ -40,14 +40,41 @@ public abstract class AbstractArrayStorage implements Storage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    public Resume[] getAll() {
+    public final Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    public int size() {
+    public final int size() {
         return size;
     }
 
+    public final void delete(String uuid) {
+        final int index = findIndex(uuid);
+        if (index >= 0) {
+            remove(index);
+            size--;
+        }
+    }
+
+    public final void save(Resume r) {
+        if (size == STORAGE_LIMIT) {
+            System.out.println("Невозможно добавить резюме. Хранилище переполнено.");
+            return;
+        }
+
+        int index = findIndex(r.getUuid());
+        if (index >= 0) {
+            System.out.println("Невозможно добавить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
+        } else {
+            insert(index, r);
+            size++;
+        }
+    }
+
     protected abstract int findIndex(String uuid);
+
+    protected abstract void remove(int index);
+
+    protected abstract void insert(int index, Resume r);
 
 }

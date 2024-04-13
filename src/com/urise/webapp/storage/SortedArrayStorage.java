@@ -12,31 +12,15 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    public void save(Resume r) {
-        if (size == STORAGE_LIMIT) {
-            System.out.println("Невозможно добавить резюме. Хранилище переполнено.");
-            return;
-        }
-
-        int index = findIndex(r.getUuid());
-        if (index >= 0) {
-            System.out.println("Невозможно добавить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
-        } else {
-            index = -index - 1;
-            System.arraycopy(storage, index, storage, index + 1, size - index);
-            storage[index] = r;
-            size++;
-        }
+    protected void remove(int index) {
+        System.arraycopy(storage, index + 1, storage, index, size - index - 1);
+        storage[size - 1] = null;
     }
 
-    @Override
-    public void delete(String uuid) {
-        final int index = findIndex(uuid);
-        if (index >= 0) {
-            System.arraycopy(storage, index + 1, storage, index, size - index - 1);
-            size--;
-            storage[size] = null;
-        }
+    protected void insert(int index, Resume r) {
+        final int insIndex = -index - 1;
+        System.arraycopy(storage, insIndex, storage, insIndex + 1, size - insIndex);
+        storage[insIndex] = r;
     }
 
 }
