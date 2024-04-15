@@ -51,8 +51,9 @@ public abstract class AbstractArrayStorage implements Storage {
     public final void delete(String uuid) {
         final int index = findIndex(uuid);
         if (index >= 0) {
-            remove(index);
+            removeResume(index);
             size--;
+            storage[size] = null;
         }
     }
 
@@ -66,15 +67,15 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             System.out.println("Невозможно добавить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
         } else {
-            insert(index, r);
+            insertResume(index, r);
             size++;
         }
     }
 
     protected abstract int findIndex(String uuid);
 
-    protected abstract void remove(int index);
+    protected abstract void removeResume(int index);
 
-    protected abstract void insert(int index, Resume r);
+    protected abstract void insertResume(int index, Resume r);
 
 }
