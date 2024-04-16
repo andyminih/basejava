@@ -12,6 +12,7 @@ public class ArrayStorage extends AbstractArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
 
+    @Override
     protected int findIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
@@ -21,10 +22,12 @@ public class ArrayStorage extends AbstractArrayStorage {
         return -1;
     }
 
-    public void removeResume(int index) {
+    @Override
+    protected void removeResume(int index) {
         storage[index] = storage[size - 1];
     }
 
+    @Override
     protected void insertResume(int index, Resume r) {
         storage[size] = r;
     }

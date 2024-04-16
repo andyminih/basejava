@@ -1,5 +1,8 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.ExistsStorageException;
+import com.urise.webapp.exception.NotExistsStorageException;
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -10,7 +13,7 @@ import java.util.Arrays;
 
 public abstract class AbstractArrayStorage implements Storage {
 
-    protected final static int STORAGE_LIMIT = 10000;
+    protected final static int STORAGE_LIMIT = 3;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
@@ -22,8 +25,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public final Resume get(String uuid) {
         final int index = findIndex(uuid);
         if (index < 0) {
-            System.out.println("Резюме " + uuid + " не найдено.");
-            return null;
+            throw new NotExistsStorageException(uuid);
         }
         return storage[index];
     }
@@ -31,7 +33,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public final void update(Resume resume) {
         final int index = findIndex(resume.getUuid());
         if (index < 0) {
-            System.out.println("Резюме не найдено.");
+            throw new NotExistsStorageException(resume.getUuid());
         } else {
             storage[index] = resume;
         }
@@ -59,13 +61,12 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public final void save(Resume r) {
         if (size == STORAGE_LIMIT) {
-            System.out.println("Невозможно добавить резюме. Хранилище переполнено.");
-            return;
+            throw new StorageException(r.getUuid(), "Невозможно добавить резюме. Хранилище переполнено.");
         }
 
         int index = findIndex(r.getUuid());
         if (index >= 0) {
-            System.out.println("Невозможно добавить резюме. Резюме " + r.getUuid() + " уже существует в хранилище.");
+            throw new ExistsStorageException(r.getUuid());
         } else {
             insertResume(index, r);
             size++;
