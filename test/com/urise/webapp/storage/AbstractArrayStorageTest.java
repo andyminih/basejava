@@ -55,10 +55,10 @@ class AbstractArrayStorageTest {
 
     @Test
     void getAll() {
-        final Resume resume1 = new Resume(UUID_1);
-        final Resume resume2 = new Resume(UUID_2);
-        final Resume resume3 = new Resume(UUID_3);
-        final Resume[] expected = {resume1, resume2, resume3};
+        final Resume r1 = new Resume(UUID_1);
+        final Resume r2 = new Resume(UUID_2);
+        final Resume r3 = new Resume(UUID_3);
+        final Resume[] expected = {r1, r2, r3};
         Assertions.assertArrayEquals(expected, storage.getAll());
     }
 
