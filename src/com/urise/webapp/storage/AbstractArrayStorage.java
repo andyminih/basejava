@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public abstract class AbstractArrayStorage implements Storage {
 
-    protected final static int STORAGE_LIMIT = 3;
+    protected final static int STORAGE_LIMIT = 4;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
@@ -52,7 +52,9 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public final void delete(String uuid) {
         final int index = findIndex(uuid);
-        if (index >= 0) {
+        if (index < 0) {
+            throw new NotExistsStorageException(uuid);
+        } else {
             removeResume(index);
             size--;
             storage[size] = null;
