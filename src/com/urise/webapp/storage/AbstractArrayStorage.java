@@ -1,8 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistsStorageException;
-import com.urise.webapp.exception.NotExistsStorageException;
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -11,7 +8,7 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected final static int STORAGE_LIMIT = 4;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
@@ -22,20 +19,21 @@ public abstract class AbstractArrayStorage implements Storage {
         size = 0;
     }
 
-    public final Resume get(String uuid) {
+    protected final Resume getResume(String uuid) {
         final int index = findIndex(uuid);
         if (index < 0) {
-            throw new NotExistsStorageException(uuid);
+            return null;
         }
         return storage[index];
     }
 
-    public final void update(Resume resume) {
+    protected final boolean updateResume(Resume resume) {
         final int index = findIndex(resume.getUuid());
         if (index < 0) {
-            throw new NotExistsStorageException(resume.getUuid());
+            return false;
         } else {
             storage[index] = resume;
+            return true;
         }
     }
 
@@ -50,28 +48,30 @@ public abstract class AbstractArrayStorage implements Storage {
         return size;
     }
 
-    public final void delete(String uuid) {
+    protected final boolean deleteResume(String uuid) {
         final int index = findIndex(uuid);
         if (index < 0) {
-            throw new NotExistsStorageException(uuid);
+            return false;
         } else {
             removeResume(index);
             size--;
             storage[size] = null;
+            return true;
         }
     }
 
-    public final void save(Resume r) {
+    protected final SaveResumeResult saveResume(Resume resume) {
         if (size == STORAGE_LIMIT) {
-            throw new StorageException(r.getUuid(), "Невозможно добавить резюме. Хранилище переполнено.");
+            return SaveResumeResult.STORAGE_OVERFLOW;
         }
 
-        int index = findIndex(r.getUuid());
+        int index = findIndex(resume.getUuid());
         if (index >= 0) {
-            throw new ExistsStorageException(r.getUuid());
+            return SaveResumeResult.ALREADY_EXISTS;
         } else {
-            insertResume(index, r);
+            insertResume(index, resume);
             size++;
+            return SaveResumeResult.OK;
         }
     }
 
