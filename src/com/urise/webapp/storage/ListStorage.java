@@ -4,7 +4,6 @@ import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class ListStorage extends AbstractStorage {
     private final Collection<Resume> storage = new ArrayList<>();
@@ -13,7 +12,7 @@ public class ListStorage extends AbstractStorage {
         storage.clear();
     }
 
-    protected final Resume getResume(String uuid) {
+    protected Object getSearchKey(String uuid) {
         for (Resume r : storage) {
             if (r.getUuid().equals(uuid)) {
                 return r;
@@ -22,17 +21,13 @@ public class ListStorage extends AbstractStorage {
         return null;
     }
 
-    protected final boolean updateResume(Resume resume) {
-        Iterator<Resume> iterator = storage.iterator();
-        while (iterator.hasNext()) {
-            Resume r = iterator.next();
-            if (r.getUuid().equals(resume.getUuid())) {
-                iterator.remove();
-                storage.add(resume);
-                return true;
-            }
-        }
-        return false;
+    protected final Resume doGet(Object searchKey) {
+        return (Resume) searchKey;
+    }
+
+    protected final void doUpdate(Object searchKey, Resume resume) {
+        storage.remove((Resume) searchKey);
+        storage.add((resume));
     }
 
     public final Resume[] getAll() {
@@ -47,15 +42,15 @@ public class ListStorage extends AbstractStorage {
         return storage.size();
     }
 
-    protected final boolean deleteResume(String uuid) {
-        return storage.remove(new Resume(uuid));
+    protected final void doDelete(Object searchKey) {
+        storage.remove((Resume) searchKey);
     }
 
-    protected final SaveResumeResult saveResume(Resume resume) {
-        if (storage.contains(resume)) {
-            return SaveResumeResult.ALREADY_EXISTS;
-        }
+    protected final void doSave(Object searchKey, Resume resume) {
         storage.add(resume);
-        return SaveResumeResult.OK;
+    }
+
+    protected boolean isExisting(Object searchKey) {
+        return searchKey != null;
     }
 }

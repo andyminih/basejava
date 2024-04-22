@@ -1,5 +1,6 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -19,22 +20,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    protected final Resume getResume(String uuid) {
-        final int index = findIndex(uuid);
-        if (index < 0) {
-            return null;
-        }
-        return storage[index];
+    protected final Resume doGet(Object searchKey) {
+        return storage[(int) searchKey];
     }
 
-    protected final boolean updateResume(Resume resume) {
-        final int index = findIndex(resume.getUuid());
-        if (index < 0) {
-            return false;
-        } else {
-            storage[index] = resume;
-            return true;
-        }
+    protected final void doUpdate(Object searchKey, Resume resume) {
+        storage[(int) searchKey] = resume;
     }
 
     /**
@@ -48,37 +39,27 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected final boolean deleteResume(String uuid) {
-        final int index = findIndex(uuid);
-        if (index < 0) {
-            return false;
-        } else {
-            removeResume(index);
-            size--;
-            storage[size] = null;
-            return true;
-        }
+    protected final void doDelete(Object searchKey) {
+        deleteResume((int) searchKey);
+        size--;
+        storage[size] = null;
     }
 
-    protected final SaveResumeResult saveResume(Resume resume) {
+    protected final void doSave(Object searchKey, Resume resume) {
         if (size == STORAGE_LIMIT) {
-            return SaveResumeResult.STORAGE_OVERFLOW;
+            throw new StorageException(resume.getUuid(), "Невозможно добавить резюме. Хранилище переполнено.");
         }
-
-        int index = findIndex(resume.getUuid());
-        if (index >= 0) {
-            return SaveResumeResult.ALREADY_EXISTS;
-        } else {
-            insertResume(index, resume);
-            size++;
-            return SaveResumeResult.OK;
-        }
+        insertResume((int) searchKey, resume);
+        size++;
     }
 
-    protected abstract int findIndex(String uuid);
-
-    protected abstract void removeResume(int index);
+    protected abstract void deleteResume(int index);
 
     protected abstract void insertResume(int index, Resume r);
+
+    @Override
+    protected boolean isExisting(Object searchKey) {
+        return (int) searchKey >= 0;
+    }
 
 }
