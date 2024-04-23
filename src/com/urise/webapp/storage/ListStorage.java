@@ -3,31 +3,30 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    private final Collection<Resume> storage = new ArrayList<>();
+    private final List<Resume> storage = new ArrayList<>();
 
     public final void clear() {
         storage.clear();
     }
 
     protected Object getSearchKey(String uuid) {
-        for (Resume r : storage) {
-            if (r.getUuid().equals(uuid)) {
-                return r;
+        for (int i = 0; i < storage.size(); i++) {
+            if (storage.get(i).getUuid().equals(uuid)) {
+                return i;
             }
         }
         return null;
     }
 
     protected final Resume doGet(Object searchKey) {
-        return (Resume) searchKey;
+        return storage.get((int) searchKey);
     }
 
     protected final void doUpdate(Object searchKey, Resume resume) {
-        storage.remove((Resume) searchKey);
-        storage.add((resume));
+        storage.set((int) searchKey, resume);
     }
 
     public final Resume[] getAll() {
@@ -43,7 +42,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     protected final void doDelete(Object searchKey) {
-        storage.remove((Resume) searchKey);
+//        storage.remove((Resume) searchKey);
+        storage.remove((int) searchKey);
     }
 
     protected final void doSave(Object searchKey, Resume resume) {

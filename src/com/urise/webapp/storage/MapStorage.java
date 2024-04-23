@@ -3,9 +3,10 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
-    private final HashMap<String, Resume> storage = new HashMap<>();
+    private final Map storage = new HashMap<String, Resume>();
 
     public final void clear() {
         storage.clear();
