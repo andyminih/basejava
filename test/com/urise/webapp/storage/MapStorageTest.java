@@ -53,7 +53,7 @@ class MapStorageTest {
     @Test
     void getAll() {
         final Resume[] expected = {resume1, resume2, resume3};
-        final Resume[] actual = storage.getAll();;
+        final Resume[] actual = storage.getAll();
         Arrays.sort(actual);
         Assertions.assertArrayEquals(expected, actual);
     }

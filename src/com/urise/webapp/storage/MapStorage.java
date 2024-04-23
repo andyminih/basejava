@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.HashMap;
 
 public class MapStorage extends AbstractStorage {
-    private final HashMap<String, Resume> storage = new  HashMap<String, Resume>();
+    private final HashMap<String, Resume> storage = new HashMap<>();
 
     public final void clear() {
         storage.clear();
@@ -20,7 +20,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     protected final void doUpdate(Object searchKey, Resume resume) {
-        storage.put(((Resume)searchKey).getUuid(), resume);
+        storage.put(((Resume) searchKey).getUuid(), resume);
     }
 
     public final Resume[] getAll() {
@@ -36,7 +36,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     protected final void doDelete(Object searchKey) {
-        storage.remove(((Resume)searchKey).getUuid());
+        storage.remove(((Resume) searchKey).getUuid());
     }
 
     protected final void doSave(Object searchKey, Resume resume) {
