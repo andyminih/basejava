@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Field;
 
-public abstract class AbstractArrayStorageTest {
+public abstract class AbstractStorageTest {
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
@@ -29,7 +29,7 @@ public abstract class AbstractArrayStorageTest {
     private static final Resume resume4 = new Resume(UUID_4, FULLNAME_4);
     private final Storage storage;
 
-    public AbstractArrayStorageTest(Storage storage) {
+    public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 

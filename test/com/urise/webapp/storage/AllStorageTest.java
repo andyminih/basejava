@@ -5,8 +5,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        ArrayStorageTest.class,
-        SortedArrayStorageTest.class,
+        StorageTest.class,
+        SortedStorageTest.class,
         ListStorageTest.class,
         MapUuidStorageTest.class,
         MapUuidStorageTest.class

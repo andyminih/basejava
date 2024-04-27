@@ -46,7 +46,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     protected final void doDelete(Object searchKey) {
-//        storage.remove((Resume) searchKey);
         storage.remove((int) searchKey);
     }
 
