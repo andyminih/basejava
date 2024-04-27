@@ -11,14 +11,6 @@ public abstract class AbstractMapStorage extends AbstractStorage {
         storage.clear();
     }
 
-    public final Resume[] getAll() {
-        final Resume[] resume = new Resume[storage.size()];
-        if (!storage.isEmpty()) {
-            storage.values().toArray(resume);
-        }
-        return resume;
-    }
-
     public final List<Resume> getAllSorted() {
         if (storage.isEmpty()) {
             return new ArrayList<Resume>();

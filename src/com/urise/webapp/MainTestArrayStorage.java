@@ -1,7 +1,7 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.MapResumeStorage;
+import com.urise.webapp.storage.ArrayStorage;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * Test for your com.uraise.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    private final static MapResumeStorage ARRAY_STORAGE = new MapResumeStorage();
+    private final static ArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) throws NoSuchFieldException {
         final Resume r1 = new Resume("uuid1", "АбрамовА");
@@ -39,10 +39,10 @@ public class MainTestArrayStorage {
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
 
-
+        ARRAY_STORAGE.clear();
         ARRAY_STORAGE.save(r3);
         ARRAY_STORAGE.save(r1);
-        ARRAY_STORAGE.save(r2);
+//        ARRAY_STORAGE.save(r2);
 
 
         List<Resume> resumeList = ARRAY_STORAGE.getAllSorted();
@@ -52,7 +52,7 @@ public class MainTestArrayStorage {
 
     static void printAll() {
         System.out.println("\nGet All");
-        for (Resume r : ARRAY_STORAGE.getAll()) {
+        for (Resume r : ARRAY_STORAGE.getAllSorted()) {
             System.out.println(r);
         }
     }

@@ -39,7 +39,7 @@ public class MapUuidStorageTest {
         storage.clear();
         assertSize(0);
 
-        Assertions.assertArrayEquals(new Resume[0], storage.getAll());
+        Assertions.assertArrayEquals(new Resume[0], storage.getAllSorted().toArray(new Resume[0]));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class MapUuidStorageTest {
     @Test
     public void getAll() {
         final Resume[] expected = {resume1, resume2, resume3};
-        final Resume[] actual = storage.getAll();
+        final Resume[] actual = storage.getAllSorted().toArray(new Resume[0]);
         Arrays.sort(actual);
         Assertions.assertArrayEquals(expected, actual);
     }

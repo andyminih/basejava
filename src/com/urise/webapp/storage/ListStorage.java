@@ -30,14 +30,6 @@ public class ListStorage extends AbstractStorage {
         storage.set((int) searchKey, resume);
     }
 
-    public final Resume[] getAll() {
-        final Resume[] resume = new Resume[storage.size()];
-        if (!storage.isEmpty()) {
-            storage.toArray(resume);
-        }
-        return resume;
-    }
-
     public final List<Resume> getAllSorted() {
         if (storage.isEmpty()) {
             return new ArrayList<Resume>();

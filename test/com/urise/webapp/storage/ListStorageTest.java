@@ -37,7 +37,7 @@ public class ListStorageTest {
         storage.clear();
         assertSize(0);
 
-        Assertions.assertArrayEquals(new Resume[0], storage.getAll());
+        Assertions.assertArrayEquals(new Resume[0], storage.getAllSorted().toArray(new Resume[0]));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ListStorageTest {
     @Test
     public void getAll() {
         final Resume[] expected = {resume1, resume2, resume3};
-        Assertions.assertArrayEquals(expected, storage.getAll());
+        Assertions.assertArrayEquals(expected, storage.getAllSorted().toArray(new Resume[0]));
     }
 
     @Test
