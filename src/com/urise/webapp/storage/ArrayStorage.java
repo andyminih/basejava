@@ -13,7 +13,7 @@ public class ArrayStorage extends AbstractArrayStorage {
      */
 
     @Override
-    protected Object getSearchKey(String uuid){
+    protected final Object getSearchKey(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
@@ -23,12 +23,12 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void deleteResume(int index) {
+    protected final void deleteResume(int index) {
         storage[index] = storage[size - 1];
     }
 
     @Override
-    protected void insertResume(int index, Resume r) {
+    protected final void insertResume(int index, Resume r) {
         storage[size] = r;
     }
 

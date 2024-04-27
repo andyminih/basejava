@@ -9,17 +9,22 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-class MapStorageTest {
+public class MapUuidStorageTest {
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
     private static final String UUID_NOT_EXISTS = "uuid_not_exists";
-    private static final Resume resume1 = new Resume(UUID_1);
-    private static final Resume resume2 = new Resume(UUID_2);
-    private static final Resume resume3 = new Resume(UUID_3);
-    private static final Resume resume4 = new Resume(UUID_4);
-    private static final MapStorage storage = new MapStorage();
+
+    private static final String FULLNAME_1 = "FullName1";
+    private static final String FULLNAME_2 = "FullName2";
+    private static final String FULLNAME_3 = "FullName3";
+    private static final String FULLNAME_4 = "FullName4";
+    private static final Resume resume1 = new Resume(UUID_1, FULLNAME_1);
+    private static final Resume resume2 = new Resume(UUID_2, FULLNAME_2);
+    private static final Resume resume3 = new Resume(UUID_3, FULLNAME_3);
+    private static final Resume resume4 = new Resume(UUID_4, FULLNAME_4);
+    private static final MapUuidStorage storage = new MapUuidStorage();
 
     @BeforeEach
     void setUp() {
@@ -29,7 +34,7 @@ class MapStorageTest {
         storage.save(resume3);
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     void clear() {
         storage.clear();
         assertSize(0);
@@ -56,6 +61,12 @@ class MapStorageTest {
         final Resume[] actual = storage.getAll();
         Arrays.sort(actual);
         Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void getAllSorted() {
+        final Resume[] expected = {resume1, resume2, resume3};
+        Assertions.assertArrayEquals(expected, storage.getAllSorted().toArray(new Resume[0]));
     }
 
     @Test

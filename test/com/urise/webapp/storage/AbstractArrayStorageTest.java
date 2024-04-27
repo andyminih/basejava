@@ -8,16 +8,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+
 class AbstractArrayStorageTest {
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
     private static final String UUID_NOT_EXISTS = "uuid_not_exists";
-    private static final Resume resume1 = new Resume(UUID_1);
-    private static final Resume resume2 = new Resume(UUID_2);
-    private static final Resume resume3 = new Resume(UUID_3);
-    private static final Resume resume4 = new Resume(UUID_4);
+
+    private static final String FULLNAME_1 = "FullName1";
+    private static final String FULLNAME_2 = "FullName2";
+    private static final String FULLNAME_3 = "FullName3";
+    private static final String FULLNAME_4 = "FullName4";
+    private static final String FULLNAME_NOT_EXISTS = "NotExists";
+
+    private static final Resume resume1 = new Resume(UUID_1, FULLNAME_1);
+    private static final Resume resume2 = new Resume(UUID_2, FULLNAME_2);
+    private static final Resume resume3 = new Resume(UUID_3, FULLNAME_3);
+    private static final Resume resume4 = new Resume(UUID_4, FULLNAME_4);
     private final Storage storage;
 
     public AbstractArrayStorageTest(Storage storage) {
@@ -54,7 +63,7 @@ class AbstractArrayStorageTest {
     }
 
     @Test
-    void getAll() {
+    void getAllSorted() {
         final Resume[] expected = {resume1, resume2, resume3};
         Assertions.assertArrayEquals(expected, storage.getAll());
     }
@@ -79,12 +88,24 @@ class AbstractArrayStorageTest {
     }
 
     @Test
-    public void saveOverflow() {
-        storage.clear();
-        for (int i = 0; i < 4; i++) {
-            storage.save(new Resume("uuid_" + i));
+    public void saveOverflow() throws NoSuchFieldException {
+        if (storageIsArray()) {
+            storage.clear();
+            for (int i = 0; i < 5; i++) {
+                storage.save(new Resume("uuid_" + i));
+            }
+            Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume(UUID_NOT_EXISTS)));
         }
-        Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume(UUID_NOT_EXISTS)));
+    }
+
+    private boolean storageIsArray() throws NoSuchFieldException {
+        final Field[] fields = storage.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals("storage")) {
+                return field.getType().isArray();
+            }
+        }
+        return false;
     }
 
     @Test
@@ -99,7 +120,7 @@ class AbstractArrayStorageTest {
 
     @Test
     public void updateNotExists() {
-        final Resume resume = new Resume(UUID_NOT_EXISTS);
+        final Resume resume = new Resume(UUID_NOT_EXISTS, FULLNAME_NOT_EXISTS);
         Assertions.assertThrows(NotExistsStorageException.class, () -> storage.update(resume));
     }
 

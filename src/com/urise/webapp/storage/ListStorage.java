@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
@@ -12,7 +13,7 @@ public class ListStorage extends AbstractStorage {
         storage.clear();
     }
 
-    protected Object getSearchKey(String uuid) {
+    protected final Object getSearchKey(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid)) {
                 return i;
@@ -30,11 +31,22 @@ public class ListStorage extends AbstractStorage {
     }
 
     public final Resume[] getAll() {
-        Resume[] resume = new Resume[storage.size()];
+        final Resume[] resume = new Resume[storage.size()];
         if (!storage.isEmpty()) {
             storage.toArray(resume);
         }
         return resume;
+    }
+
+    public final List<Resume> getAllSorted() {
+        if (storage.isEmpty()) {
+            return new ArrayList<Resume>();
+        }
+        final Resume[] resumeArray = new Resume[storage.size()];
+        storage.toArray(resumeArray);
+        final List<Resume> resumeList = Arrays.asList(resumeArray);
+        resumeList.sort(Resume.Comparator());
+        return resumeList;
     }
 
     public final int size() {
@@ -50,7 +62,7 @@ public class ListStorage extends AbstractStorage {
         storage.add(resume);
     }
 
-    protected boolean isExisting(Object searchKey) {
+    protected final boolean isExisting(Object searchKey) {
         return searchKey != null;
     }
 }
