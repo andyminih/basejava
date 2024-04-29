@@ -11,30 +11,28 @@ public abstract class AbstractMapStorage extends AbstractStorage {
         storage.clear();
     }
 
-    public final List<Resume> getAllSorted() {
-        if (storage.isEmpty()) {
-            return new ArrayList<Resume>();
-        }
-
-        Resume[] resumeArray = new Resume[storage.size()];
-        storage.values().toArray(resumeArray);
-
-        List<Resume> resumeList = Arrays.asList(resumeArray);
-        resumeList.sort(Resume.Comparator());
-
-        return resumeList;
-    }
-
     public final int size() {
         return storage.size();
     }
 
+    @Override
     protected final void doSave(Object searchKey, Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 
+    @Override
     protected boolean isExisting(Object searchKey) {
         return searchKey != null;
+    }
+
+    @Override
+    protected final List<Resume> doGetAll() {
+        if (storage.isEmpty()) {
+            return new ArrayList<Resume>();
+        }
+        Resume[] resumeArray = new Resume[storage.size()];
+        storage.values().toArray(resumeArray);
+        return Arrays.asList(resumeArray);
     }
 
     protected abstract Object getSearchKey(String uuid);

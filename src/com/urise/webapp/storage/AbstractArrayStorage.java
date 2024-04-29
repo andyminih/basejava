@@ -21,10 +21,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
+    public final int size() {
+        return size;
+    }
+
+    @Override
     protected final Resume doGet(Object searchKey) {
         return storage[(int) searchKey];
     }
 
+    @Override
     protected final void doUpdate(Object searchKey, Resume resume) {
         storage[(int) searchKey] = resume;
     }
@@ -32,28 +38,20 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-
-    public final List<Resume> getAllSorted() {
+    @Override
+    protected final List<Resume> doGetAll() {
         final List<Resume> resumeList = Arrays.asList(storage);
-        resumeList.sort(Resume.Comparator());
-        for (int i = 0; i < resumeList.size(); i++) {
-            if (resumeList.get(i) == null) {
-                return resumeList.subList(0, i);
-            }
-        }
-        return resumeList;
+        return resumeList.subList(0, size());
     }
 
-    public final int size() {
-        return size;
-    }
-
+    @Override
     protected final void doDelete(Object searchKey) {
         deleteResume((int) searchKey);
         size--;
         storage[size] = null;
     }
 
+    @Override
     protected final void doSave(Object searchKey, Resume resume) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException(resume.getUuid(), "Невозможно добавить резюме. Хранилище переполнено.");
@@ -62,13 +60,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size++;
     }
 
-    protected abstract void deleteResume(int index);
-
-    protected abstract void insertResume(int index, Resume r);
-
     @Override
     protected final boolean isExisting(Object searchKey) {
         return (int) searchKey >= 0;
     }
+
+    protected abstract void deleteResume(int index);
+
+    protected abstract void insertResume(int index, Resume r);
 
 }

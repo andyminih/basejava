@@ -4,24 +4,15 @@ import com.urise.webapp.exception.ExistsStorageException;
 import com.urise.webapp.exception.NotExistsStorageException;
 import com.urise.webapp.model.Resume;
 
+import java.util.Comparator;
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
 
-    protected abstract Object getSearchKey(String uuid);
-
-    private Object getExistingSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (!isExisting(searchKey)) {
-            throw new NotExistsStorageException(uuid);
-        }
-        return searchKey;
-    }
-
-    private Object getNotExistingSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (isExisting(searchKey)) {
-            throw new ExistsStorageException(uuid);
-        }
-        return searchKey;
+    public final List<Resume> getAllSorted() {
+        final List<Resume> resumeList = doGetAll();
+        resumeList.sort(COMPARATOR);
+        return resumeList;
     }
 
     public final Resume get(String uuid) {
@@ -53,4 +44,26 @@ public abstract class AbstractStorage implements Storage {
     protected abstract void doSave(Object searchKey, Resume resume);
 
     protected abstract boolean isExisting(Object searchKey);
+
+    protected abstract Object getSearchKey(String uuid);
+
+    protected abstract List<Resume> doGetAll();
+
+    protected static final Comparator<Resume> COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
+    private Object getExistingSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExisting(searchKey)) {
+            throw new NotExistsStorageException(uuid);
+        }
+        return searchKey;
+    }
+
+    private Object getNotExistingSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExisting(searchKey)) {
+            throw new ExistsStorageException(uuid);
+        }
+        return searchKey;
+    }
+
 }

@@ -94,7 +94,7 @@ public abstract class AbstractStorageTest {
             for (int i = 0; i < 5; i++) {
                 storage.save(new Resume("uuid_" + i));
             }
-            Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume(UUID_NOT_EXISTS)));
+            Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume(FULLNAME_NOT_EXISTS)));
         }
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void saveExists() {
-        final Resume resume = new Resume(UUID_3);
+        final Resume resume = new Resume(UUID_3, FULLNAME_3);
         Assertions.assertThrows(ExistsStorageException.class, () -> storage.save(resume));
     }
 
