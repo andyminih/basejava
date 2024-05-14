@@ -4,7 +4,7 @@ import com.urise.webapp.model.Resume;
 
 import java.util.*;
 
-public abstract class AbstractMapStorage extends AbstractStorage {
+public abstract class AbstractMapStorage<SK> extends AbstractStorage<SK> {
     protected final Map storage = new HashMap<String, Resume>();
 
     public final void clear() {
@@ -16,12 +16,12 @@ public abstract class AbstractMapStorage extends AbstractStorage {
     }
 
     @Override
-    protected final void doSave(Object searchKey, Resume resume) {
+    protected final void doSave(SK searchKey, Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected boolean isExisting(Object searchKey) {
+    protected boolean isExisting(SK searchKey) {
         return searchKey != null;
     }
 
@@ -35,12 +35,12 @@ public abstract class AbstractMapStorage extends AbstractStorage {
         return Arrays.asList(resumeArray);
     }
 
-    protected abstract Object getSearchKey(String uuid);
+    protected abstract SK getSearchKey(String uuid);
 
-    protected abstract Resume doGet(Object searchKey);
+    protected abstract Resume doGet(SK searchKey);
 
-    protected abstract void doUpdate(Object searchKey, Resume resume);
+    protected abstract void doUpdate(SK searchKey, Resume resume);
 
-    protected abstract void doDelete(Object searchKey);
+    protected abstract void doDelete(SK searchKey);
 
 }

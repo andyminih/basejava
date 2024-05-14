@@ -10,7 +10,7 @@ import java.util.List;
  * Array based storage for Resumes
  */
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
 
     protected final static int STORAGE_LIMIT = 4;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
@@ -26,12 +26,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected final Resume doGet(Object searchKey) {
+    protected final Resume doGet(Integer searchKey) {
         return storage[(int) searchKey];
     }
 
     @Override
-    protected final void doUpdate(Object searchKey, Resume resume) {
+    protected final void doUpdate(Integer searchKey, Resume resume) {
         storage[(int) searchKey] = resume;
     }
 
@@ -45,14 +45,14 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected final void doDelete(Object searchKey) {
+    protected final void doDelete(Integer searchKey) {
         deleteResume((int) searchKey);
         size--;
         storage[size] = null;
     }
 
     @Override
-    protected final void doSave(Object searchKey, Resume resume) {
+    protected final void doSave(Integer searchKey, Resume resume) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException(resume.getUuid(), "Невозможно добавить резюме. Хранилище переполнено.");
         }
@@ -61,7 +61,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected final boolean isExisting(Object searchKey) {
+    protected final boolean isExisting(Integer searchKey) {
         return (int) searchKey >= 0;
     }
 
