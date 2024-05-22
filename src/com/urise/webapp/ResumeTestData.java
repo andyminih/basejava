@@ -5,11 +5,13 @@ import com.urise.webapp.model.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ResumeTestData {
-    final Resume resume = new Resume("Григорий Кислин");
+    final Resume resume = createResume(UUID.randomUUID().toString(), "Григорий Кислин");
 
-    public ResumeTestData() {
+    public static Resume createResume(String uuid, String fullName) {
+        final Resume resume = new Resume(uuid, fullName);
         resume.putContact(ContactType.PHONE, "+7(921) 855-0482");
         resume.putContact(ContactType.SKYPE, "skype:grigory.kislin");
 
@@ -50,6 +52,8 @@ public class ResumeTestData {
         periodList.add(new Period("Инженер (программист Fortran, C)", "", LocalDate.of(1987, 9, 1), LocalDate.of(1993, 7, 1)));
         companyList.add(new Company("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/", new ArrayList<>(periodList)));
         resume.putSection(SectionType.EDUCATION, new CompanySection(new ArrayList<>(companyList)));
+
+        return resume;
     }
 
     public static void main(String[] args) {

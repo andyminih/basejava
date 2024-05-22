@@ -1,5 +1,6 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistsStorageException;
 import com.urise.webapp.exception.NotExistsStorageException;
 import com.urise.webapp.exception.StorageException;
@@ -23,10 +24,10 @@ public abstract class AbstractStorageTest {
     private static final String FULLNAME_4 = "FullName4";
     private static final String FULLNAME_NOT_EXISTS = "NotExists";
 
-    private static final Resume resume1 = new Resume(UUID_1, FULLNAME_1);
-    private static final Resume resume2 = new Resume(UUID_2, FULLNAME_2);
-    private static final Resume resume3 = new Resume(UUID_3, FULLNAME_3);
-    private static final Resume resume4 = new Resume(UUID_4, FULLNAME_4);
+    private static final Resume resume1 = ResumeTestData.createResume(UUID_1, FULLNAME_1);
+    private static final Resume resume2 = ResumeTestData.createResume(UUID_2, FULLNAME_2);
+    private static final Resume resume3 = ResumeTestData.createResume(UUID_3, FULLNAME_3);
+    private static final Resume resume4 = ResumeTestData.createResume(UUID_4, FULLNAME_4);
     private final Storage storage;
 
     public AbstractStorageTest(Storage storage) {
@@ -121,13 +122,13 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void updateNotExists() {
-        final Resume resume = new Resume(UUID_NOT_EXISTS, FULLNAME_NOT_EXISTS);
+        final Resume resume = ResumeTestData.createResume(UUID_NOT_EXISTS, FULLNAME_NOT_EXISTS);
         Assertions.assertThrows(NotExistsStorageException.class, () -> storage.update(resume));
     }
 
     @Test
     public void saveExists() {
-        final Resume resume = new Resume(UUID_3, FULLNAME_3);
+        final Resume resume = ResumeTestData.createResume(UUID_3, FULLNAME_3);
         Assertions.assertThrows(ExistsStorageException.class, () -> storage.save(resume));
     }
 
