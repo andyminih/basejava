@@ -26,7 +26,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            file.createNewFile();
             return doRead(file);
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
@@ -44,7 +43,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file) {
-        file.delete();
+        if (!file.delete()) {
+            throw new StorageException("IO error", file.getName());
+        }
     }
 
     @Override
@@ -71,7 +72,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected List<Resume> doGetAll() {
         final List<Resume> list = new ArrayList<Resume>();
 
-        for (File file : directory.listFiles()) {
+        for (File file : gtCheckedListFiles()) {
             if (file.isFile()) {
                 try {
                     list.add(doRead(file));
@@ -85,9 +86,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        for (File file : directory.listFiles()) {
+        for (File file : gtCheckedListFiles()) {
             if (file.isFile()) {
-                file.delete();
+                if (!file.delete()) {
+                    throw new StorageException("IO error", file.getName());
+                }
             }
         }
     }
@@ -95,7 +98,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     public int size() {
         int size = 0;
-        for (File file : directory.listFiles()) {
+        for (File file : gtCheckedListFiles()) {
             if (file.isFile()) {
                 size++;
             }
@@ -106,4 +109,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected abstract Resume doRead(File file) throws IOException;
 
     protected abstract void doWrite(File file, Resume resume) throws IOException;
+
+    private File[] gtCheckedListFiles() {
+        final File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("IO error", directory.getName());
+        }
+        return files;
+    }
 }
