@@ -51,7 +51,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doSave(File file, Resume resume) {
         try {
-            file.createNewFile();
+            if (!file.createNewFile()){
+                throw new StorageException("IO error", file.getName());
+            }
             doWrite(file, resume);
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
@@ -70,7 +72,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doGetAll() {
-        final List<Resume> list = new ArrayList<Resume>();
+        final List<Resume> list = new ArrayList<>();
 
         for (File file : gtCheckedListFiles()) {
             if (file.isFile()) {
@@ -88,9 +90,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     public void clear() {
         for (File file : gtCheckedListFiles()) {
             if (file.isFile()) {
-                if (!file.delete()) {
-                    throw new StorageException("IO error", file.getName());
-                }
+                doDelete(file);
             }
         }
     }
