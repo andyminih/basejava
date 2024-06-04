@@ -1,9 +1,14 @@
 package com.urise.webapp.model;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Company {
+import static com.urise.webapp.util.DateUtil.NOW;
+
+public class Company implements Serializable {
     private final String name;
     private final String website;
 
@@ -15,6 +20,10 @@ public class Company {
         this.name = name;
         this.website = website;
         this.list = list;
+    }
+
+    public Company(String name, String website, Period... periods) {
+        this(name, website, Arrays.asList(periods));
     }
 
     public String getName() {
@@ -65,5 +74,76 @@ public class Company {
             }
         }
         return stringBuilder.toString();
+    }
+
+    public static class Period implements Serializable{
+        private final static long serialVersionUID = 1L;
+        private final String title;
+        private final String description;
+        private final LocalDate start;
+        private final LocalDate end;
+
+        public Period(String title, String description, LocalDate start, LocalDate end) {
+            Objects.requireNonNull(title, "title must not be null");
+            Objects.requireNonNull(end, "end must not be null");
+            Objects.requireNonNull(start, "start must not be null");
+            this.title = title;
+            this.description = description;
+            this.start = start;
+            this.end = end;
+        }
+
+        public Period(String title, String description, LocalDate start){
+            this(title, description, start, NOW);
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+
+        public String getDescription() {
+            return description;
+        }
+
+        public LocalDate getStart() {
+            return start;
+        }
+
+        public LocalDate getEnd() {
+            return end;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Period period = (Period) o;
+
+            if (!title.equals(period.title)) return false;
+            if (!Objects.equals(description, period.description)) return false;
+            if (!start.equals(period.start)) return false;
+            return end.equals(period.end);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = title.hashCode();
+            result = 31 * result + (description != null ? description.hashCode() : 0);
+            result = 31 * result + start.hashCode();
+            result = 31 * result + end.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Period{" +
+                    "title='" + title + '\'' +
+                    ", description='" + description + '\'' +
+                    ", start=" + start +
+                    ", end=" + end +
+                    '}';
+        }
     }
 }

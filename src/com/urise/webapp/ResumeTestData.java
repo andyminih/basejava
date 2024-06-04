@@ -32,11 +32,11 @@ public class ResumeTestData {
         resume.putSection(SectionType.QUALIFICATIONS, new ListSection(new ArrayList<>(stringList)));
 
         final List<Company> companyList = new ArrayList<Company>();
-        final List<Period> periodList = new ArrayList<Period>();
-        periodList.add(new Period("Автор проекта", "Создание, организация и проведение Java онлайн проектов и стажировок.", LocalDate.of(2013, 10, 1), LocalDate.of(2013, 10, 1)));
+        final List<Company.Period> periodList = new ArrayList<Company.Period>();
+        periodList.add(new Company.Period("Автор проекта", "Создание, организация и проведение Java онлайн проектов и стажировок.", LocalDate.of(2013, 10, 1)));
         companyList.add(new Company("Java Online Projects", "https://javaops.ru/", new ArrayList<>(periodList)));
         periodList.clear();
-        periodList.add(new Period("Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.",
+        periodList.add(new Company.Period("Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.",
                 LocalDate.of(2014, 10, 1), LocalDate.of(2016, 1, 1)));
         companyList.add(new Company("Wrike", "https://www.wrike.com", new ArrayList<>(periodList)));
         resume.putSection(SectionType.EXPERIENCE, new CompanySection(new ArrayList<>(companyList)));
@@ -44,12 +44,12 @@ public class ResumeTestData {
 
         companyList.clear();
         periodList.clear();
-        periodList.add(new Period("6 месяцев обучения цифровым телефонным сетям (Москва)", "", LocalDate.of(1997, 9, 1), LocalDate.of(1998, 3, 1)));
+        periodList.add(new Company.Period("6 месяцев обучения цифровым телефонным сетям (Москва)", "", LocalDate.of(1997, 9, 1), LocalDate.of(1998, 3, 1)));
         companyList.add(new Company("Alcatel", "http://www.alcatel.ru/", new ArrayList<>(periodList)));
 
         periodList.clear();
-        periodList.add(new Period("Аспирантура (программист С, С++)", "", LocalDate.of(1993, 9, 1), LocalDate.of(1996, 7, 1)));
-        periodList.add(new Period("Инженер (программист Fortran, C)", "", LocalDate.of(1987, 9, 1), LocalDate.of(1993, 7, 1)));
+        periodList.add(new Company.Period("Аспирантура (программист С, С++)", "", LocalDate.of(1993, 9, 1), LocalDate.of(1996, 7, 1)));
+        periodList.add(new Company.Period("Инженер (программист Fortran, C)", "", LocalDate.of(1987, 9, 1), LocalDate.of(1993, 7, 1)));
         companyList.add(new Company("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/", new ArrayList<>(periodList)));
         resume.putSection(SectionType.EDUCATION, new CompanySection(new ArrayList<>(companyList)));
 

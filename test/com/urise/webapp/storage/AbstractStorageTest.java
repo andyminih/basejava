@@ -9,26 +9,27 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
+import java.io.File;
 import java.lang.reflect.Field;
 
 public abstract class AbstractStorageTest {
+    protected final static File STORAGE_DIR = new File("C:\\Users\\Marchenko_AV\\basejava\\storage");
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
     private static final String UUID_NOT_EXISTS = "uuid_not_exists";
-
     private static final String FULLNAME_1 = "FullName1";
     private static final String FULLNAME_2 = "FullName2";
     private static final String FULLNAME_3 = "FullName3";
     private static final String FULLNAME_4 = "FullName4";
     private static final String FULLNAME_NOT_EXISTS = "NotExists";
-
     private static final Resume resume1 = ResumeTestData.createResume(UUID_1, FULLNAME_1);
     private static final Resume resume2 = ResumeTestData.createResume(UUID_2, FULLNAME_2);
     private static final Resume resume3 = ResumeTestData.createResume(UUID_3, FULLNAME_3);
     private static final Resume resume4 = ResumeTestData.createResume(UUID_4, FULLNAME_4);
     private final Storage storage;
+
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -61,7 +62,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         storage.update(resume1);
-        Assertions.assertSame(resume1, storage.get(resume1.getUuid()));
+        Assertions.assertEquals(resume1, storage.get(resume1.getUuid()));
     }
 
     @Test
