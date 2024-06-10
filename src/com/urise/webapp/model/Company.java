@@ -29,6 +29,7 @@ public class Company implements Serializable {
         this.name = name;
         this.website = website;
         this.list = list;
+
     }
 
     public Company(String name, String website, Period... periods) {
