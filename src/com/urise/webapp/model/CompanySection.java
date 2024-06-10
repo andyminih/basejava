@@ -6,14 +6,17 @@ import java.util.Objects;
 
 public class CompanySection extends Section {
     private final static long serialVersionUID = 1L;
-    private final List<Company> list;
+    private List<Company> list;
 
     public CompanySection(List<Company> list) {
         Objects.requireNonNull(list, "list must not be null");
         this.list = list;
     }
 
-    public CompanySection(Company... companies){
+    public CompanySection() {
+    }
+
+    public CompanySection(Company... companies) {
         this(Arrays.asList(companies));
     }
 

@@ -1,7 +1,8 @@
-package com.urise.webapp.storage;
+package com.urise.webapp.storage.serialization;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.AbstractStorage;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,11 +11,11 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
 
-    private final SerializationStrategy ss;
+    private final SerializationStrategy serializationStrategy;
     private final File directory;
 
-    public FileStorage(File directory, SerializationStrategy ss) {
-        this.ss = ss;
+    public FileStorage(File directory, SerializationStrategy serializationStrategy) {
+        this.serializationStrategy = serializationStrategy;
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
@@ -28,7 +29,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return serializationStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
@@ -36,7 +37,11 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doUpdate(File file, Resume resume) {
-        doWrite(file, resume);
+        try {
+            serializationStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
+        } catch (IOException e) {
+            throw new StorageException("IO error", file.getName(), e);
+        }
     }
 
     @Override
@@ -99,18 +104,12 @@ public class FileStorage extends AbstractStorage<File> {
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
-        doWrite(file, resume);
-    }
 
-    private Resume doRead(InputStream is) throws IOException {
-        return ss.doRead(is);
-    }
-
-    private void doWrite(File file, Resume resume) {
         try {
-            ss.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
+            serializationStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
     }
+
 }

@@ -1,5 +1,10 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.LocalDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -8,11 +13,15 @@ import java.util.Objects;
 
 import static com.urise.webapp.util.DateUtil.NOW;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
-    private final String name;
-    private final String website;
+    private String name;
+    private String website;
 
-    private final List<Period> list;
+    private List<Period> list;
+
+    public Company() {
+    }
 
     public Company(String name, String website, List<Period> list) {
         Objects.requireNonNull(name, "name must not be null");
@@ -76,12 +85,18 @@ public class Company implements Serializable {
         return stringBuilder.toString();
     }
 
-    public static class Period implements Serializable{
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Period implements Serializable {
         private final static long serialVersionUID = 1L;
-        private final String title;
-        private final String description;
-        private final LocalDate start;
-        private final LocalDate end;
+        private String title;
+        private String description;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate start;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate end;
+
+        public Period() {
+        }
 
         public Period(String title, String description, LocalDate start, LocalDate end) {
             Objects.requireNonNull(title, "title must not be null");
@@ -93,7 +108,7 @@ public class Company implements Serializable {
             this.end = end;
         }
 
-        public Period(String title, String description, LocalDate start){
+        public Period(String title, String description, LocalDate start) {
             this(title, description, start, NOW);
         }
 

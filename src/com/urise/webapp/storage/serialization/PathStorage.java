@@ -1,24 +1,25 @@
-package com.urise.webapp.storage;
+package com.urise.webapp.storage.serialization;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.AbstractStorage;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
 
     private final Path directory;
-    private SerializationStrategy ss;
+    private final SerializationStrategy serializationStrategy;
 
-    public PathStorage(String dir, SerializationStrategy ss) {
-        this.ss = ss;
+    public PathStorage(String dir, SerializationStrategy serializationStrategy) {
+        this.serializationStrategy = serializationStrategy;
         Path directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory)) {
@@ -33,7 +34,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
+            return serializationStrategy.doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("IO error", path.toAbsolutePath().toString(), e);
         }
@@ -41,7 +42,11 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected void doUpdate(Path path, Resume resume) {
-        doWrite(path, resume);
+        try {
+            serializationStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(path.toFile())), resume);
+        } catch (IOException e) {
+            throw new StorageException("IO error", directory.toAbsolutePath().toString(), e);
+        }
     }
 
     @Override
@@ -60,7 +65,11 @@ public class PathStorage extends AbstractStorage<Path> {
         } catch (IOException e) {
             throw new StorageException("IO error", path.toAbsolutePath().toString(), e);
         }
-        doWrite(path, resume);
+        try {
+            serializationStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(path.toFile())), resume);
+        } catch (IOException e) {
+            throw new StorageException("IO error", directory.toAbsolutePath().toString(), e);
+        }
     }
 
     @Override
@@ -73,9 +82,9 @@ public class PathStorage extends AbstractStorage<Path> {
         return directory.resolve(uuid);
     }
 
-    protected void forEachFile(Consumer<Path> action) {
+    protected Stream<Path> getFilesList() {
         try {
-            Files.list(directory).forEach(action);
+            return Files.list(directory);
         } catch (IOException e) {
             throw new StorageException("IO error", directory.toAbsolutePath().toString(), e);
         }
@@ -83,40 +92,16 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     public int size() {
-        final int[] size = {0};
-        forEachFile(path -> {
-            if (!Files.isDirectory(path)) {
-                size[0]++;
-            }
-        });
-        return size[0];
+        return (int) getFilesList().count();
     }
 
     @Override
     public void clear() {
-        forEachFile(PathStorage.this::doDelete);
+        getFilesList().forEach(PathStorage.this::doDelete);
     }
 
     @Override
     protected List<Resume> doGetAll() {
-        final List<Resume> list = new ArrayList<>();
-        forEachFile(path -> {
-            if (!Files.isDirectory(path)) {
-                list.add(doGet(path));
-            }
-        });
-        return list;
-    }
-
-    private Resume doRead(InputStream is) throws IOException {
-        return ss.doRead(is);
-    }
-
-    private void doWrite(Path path, Resume resume) {
-        try {
-            ss.doWrite(new BufferedOutputStream(new FileOutputStream(path.toFile())), resume);
-        } catch (IOException e) {
-            throw new StorageException("IO error", directory.toAbsolutePath().toString(), e);
-        }
+        return getFilesList().map(this::doGet).collect(Collectors.toList());
     }
 }
