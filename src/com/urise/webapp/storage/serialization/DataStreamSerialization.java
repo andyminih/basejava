@@ -1,6 +1,5 @@
 package com.urise.webapp.storage.serialization;
 
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 
 import java.io.*;
@@ -39,12 +38,15 @@ public class DataStreamSerialization implements SerializationStrategy {
                         int companyCount = dis.readInt();
                         for (int c = 0; c < companyCount; c++) {
                             String name = dis.readUTF();
-                            String website = dis.readUTF();
+                            String website = (dis.readInt() == 0) ? null : dis.readUTF();
                             final List<Company.Period> periodList = new ArrayList<Company.Period>();
                             int periodCount = dis.readInt();
                             for (int p = 0; p < periodCount; p++) {
                                 periodList.add(new Company.Period(
-                                        dis.readUTF(), dis.readUTF(), LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF())
+                                        dis.readUTF(),
+                                        (dis.readInt() == 0) ? null : dis.readUTF(),
+                                        LocalDate.parse(dis.readUTF()),
+                                        LocalDate.parse(dis.readUTF())
                                 ));
                             }
                             companyList.add(new Company(name, website, periodList));
@@ -80,40 +82,38 @@ public class DataStreamSerialization implements SerializationStrategy {
                         dos.writeUTF(((TextSection) entry.getValue()).getText());
                         break;
                     case ACHIEVEMENTS, QUALIFICATIONS:
-                        List list = ((ListSection) entry.getValue()).getList();
+                        List<String> list = ((ListSection) entry.getValue()).getList();
                         dos.writeInt(list.size());
-                        list.forEach(string -> {
-                            try {
-                                dos.writeUTF(string.toString());
-                            } catch (IOException e) {
-                                throw new StorageException(null, "Error write resume", e);
-                            }
-                        });
+                        for (String string : list) {
+                            dos.writeUTF(string);
+                        }
                         break;
                     case EDUCATION, EXPERIENCE:
-                        ;
-                        List companies = ((CompanySection) entry.getValue()).getList();
+                        List<Company> companies = ((CompanySection) entry.getValue()).getList();
                         dos.writeInt(companies.size());
-                        companies.forEach(company -> {
-                            try {
-                                dos.writeUTF(((Company) company).getName());
-                                dos.writeUTF(((Company) company).getWebsite());
-                                List periods = (((Company) company).getList());
-                                dos.writeInt(periods.size());
-                                periods.forEach(period -> {
-                                    try {
-                                        dos.writeUTF(((Company.Period) period).getTitle());
-                                        dos.writeUTF(((Company.Period) period).getDescription());
-                                        dos.writeUTF(((Company.Period) period).getStart().toString());
-                                        dos.writeUTF(((Company.Period) period).getEnd().toString());
-                                    } catch (IOException e) {
-                                        throw new StorageException(null, "Error write resume", e);
-                                    }
-                                });
-                            } catch (IOException e) {
-                                throw new StorageException(null, "Error write resume", e);
+                        for (Company company : companies) {
+                            dos.writeUTF(company.getName());
+                            if (company.getWebsite() == null) {
+                                dos.writeInt(0);
+                            } else {
+                                dos.writeInt(1);
+                                dos.writeUTF(company.getWebsite());
                             }
-                        });
+                            List<Company.Period> periods = (company.getList());
+                            dos.writeInt(periods.size());
+                            for (Company.Period period : periods) {
+                                dos.writeUTF(period.getTitle());
+                                if (period.getDescription() == null) {
+                                    dos.writeInt(0);
+                                } else {
+                                    dos.writeInt(1);
+                                    dos.writeUTF(period.getDescription());
+                                }
+                                dos.writeUTF(period.getStart().toString());
+                                dos.writeUTF(period.getEnd().toString());
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }

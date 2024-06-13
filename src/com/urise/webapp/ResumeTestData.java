@@ -44,7 +44,7 @@ public class ResumeTestData {
 
         companyList.clear();
         periodList.clear();
-        periodList.add(new Company.Period("6 месяцев обучения цифровым телефонным сетям (Москва)", "", LocalDate.of(1997, 9, 1), LocalDate.of(1998, 3, 1)));
+        periodList.add(new Company.Period("6 месяцев обучения цифровым телефонным сетям (Москва)", null, LocalDate.of(1997, 9, 1), LocalDate.of(1998, 3, 1)));
         companyList.add(new Company("Alcatel", "http://www.alcatel.ru/", new ArrayList<>(periodList)));
 
         periodList.clear();
