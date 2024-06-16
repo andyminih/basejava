@@ -4,9 +4,7 @@ import com.urise.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamSerialization implements SerializationStrategy {
     @Override
@@ -42,12 +40,7 @@ public class DataStreamSerialization implements SerializationStrategy {
                             final List<Company.Period> periodList = new ArrayList<Company.Period>();
                             int periodCount = dis.readInt();
                             for (int p = 0; p < periodCount; p++) {
-                                periodList.add(new Company.Period(
-                                        dis.readUTF(),
-                                        (dis.readInt() == 0) ? null : dis.readUTF(),
-                                        LocalDate.parse(dis.readUTF()),
-                                        LocalDate.parse(dis.readUTF())
-                                ));
+                                periodList.add(new Company.Period(dis.readUTF(), (dis.readInt() == 0) ? null : dis.readUTF(), LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF())));
                             }
                             companyList.add(new Company(name, website, periodList));
                         }
@@ -61,21 +54,36 @@ public class DataStreamSerialization implements SerializationStrategy {
         }
     }
 
+    private void writeWithException(Collection collection, FunctionWriter action) throws IOException {
+        Objects.requireNonNull(action);
+        for (Object o : collection) {
+            action.accept(o);
+        }
+    }
+
+    private void writeWithException(Map map, FunctionWriter action) throws IOException {
+        Objects.requireNonNull(action);
+        for (Object o : map.entrySet()) {
+            action.accept(o);
+        }
+    }
+
     @Override
     public void doWrite(OutputStream os, Resume resume) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
+
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writeWithException(contacts, (FunctionWriter<Map.Entry<ContactType, String>>) (entry) -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
 
             Map<SectionType, Section> sections = resume.getSections();
             dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
+            writeWithException(sections, (FunctionWriter<Map.Entry<SectionType, Section>>) (entry) -> {
                 dos.writeUTF(entry.getKey().name());
                 switch (entry.getKey()) {
                     case OBJECTIVE, PERSONAL:
@@ -84,14 +92,12 @@ public class DataStreamSerialization implements SerializationStrategy {
                     case ACHIEVEMENTS, QUALIFICATIONS:
                         List<String> list = ((ListSection) entry.getValue()).getList();
                         dos.writeInt(list.size());
-                        for (String string : list) {
-                            dos.writeUTF(string);
-                        }
+                        writeWithException(list, (FunctionWriter<String>) dos::writeUTF);
                         break;
                     case EDUCATION, EXPERIENCE:
                         List<Company> companies = ((CompanySection) entry.getValue()).getList();
                         dos.writeInt(companies.size());
-                        for (Company company : companies) {
+                        writeWithException(companies, (FunctionWriter<Company>) (company) -> {
                             dos.writeUTF(company.getName());
                             if (company.getWebsite() == null) {
                                 dos.writeInt(0);
@@ -99,9 +105,10 @@ public class DataStreamSerialization implements SerializationStrategy {
                                 dos.writeInt(1);
                                 dos.writeUTF(company.getWebsite());
                             }
+
                             List<Company.Period> periods = (company.getList());
                             dos.writeInt(periods.size());
-                            for (Company.Period period : periods) {
+                            writeWithException(periods, (FunctionWriter<Company.Period>) (period) -> {
                                 dos.writeUTF(period.getTitle());
                                 if (period.getDescription() == null) {
                                     dos.writeInt(0);
@@ -111,13 +118,13 @@ public class DataStreamSerialization implements SerializationStrategy {
                                 }
                                 dos.writeUTF(period.getStart().toString());
                                 dos.writeUTF(period.getEnd().toString());
-                            }
-                        }
+                            });
+                        });
                         break;
                     default:
                         break;
                 }
-            }
+            });
         }
     }
 }
