@@ -54,20 +54,6 @@ public class DataStreamSerialization implements SerializationStrategy {
         }
     }
 
-    private void writeWithException(Collection collection, FunctionWriter action) throws IOException {
-        Objects.requireNonNull(action);
-        for (Object o : collection) {
-            action.accept(o);
-        }
-    }
-
-    private void writeWithException(Map map, FunctionWriter action) throws IOException {
-        Objects.requireNonNull(action);
-        for (Object o : map.entrySet()) {
-            action.accept(o);
-        }
-    }
-
     @Override
     public void doWrite(OutputStream os, Resume resume) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
@@ -76,14 +62,14 @@ public class DataStreamSerialization implements SerializationStrategy {
 
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            writeWithException(contacts, (FunctionWriter<Map.Entry<ContactType, String>>) (entry) -> {
+            writeWithException(contacts.entrySet(), (FunctionWriter<Map.Entry<ContactType, String>>) (entry) -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             });
 
             Map<SectionType, Section> sections = resume.getSections();
             dos.writeInt(sections.size());
-            writeWithException(sections, (FunctionWriter<Map.Entry<SectionType, Section>>) (entry) -> {
+            writeWithException(sections.entrySet(), (FunctionWriter<Map.Entry<SectionType, Section>>) (entry) -> {
                 dos.writeUTF(entry.getKey().name());
                 switch (entry.getKey()) {
                     case OBJECTIVE, PERSONAL:
@@ -125,6 +111,13 @@ public class DataStreamSerialization implements SerializationStrategy {
                         break;
                 }
             });
+        }
+    }
+
+    private <T> void writeWithException(Collection<T> collection, FunctionWriter action) throws IOException {
+        Objects.requireNonNull(action);
+        for (T t : collection) {
+            action.accept(t);
         }
     }
 }
