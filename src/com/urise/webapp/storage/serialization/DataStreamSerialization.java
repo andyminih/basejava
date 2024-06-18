@@ -13,8 +13,7 @@ public class DataStreamSerialization implements SerializationStrategy {
             final Resume resume = new Resume(dis.readUTF(), dis.readUTF());
             readWithException(dis.readInt(), () -> resume.putContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
 
-            final int sectionCount = dis.readInt();
-            for (int i = 0; i < sectionCount; i++) {
+            readWithException(dis.readInt(), () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 switch (sectionType) {
                     case OBJECTIVE, PERSONAL:
@@ -41,7 +40,7 @@ public class DataStreamSerialization implements SerializationStrategy {
                     default:
                         break;
                 }
-            }
+            });
             return resume;
         }
     }
