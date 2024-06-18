@@ -20,16 +20,16 @@ public class DataStreamSerialization implements SerializationStrategy {
                         resume.putSection(sectionType, new TextSection(dis.readUTF()));
                         break;
                     case ACHIEVEMENTS, QUALIFICATIONS:
-                        final List<String> stringList = new ArrayList<String>();
+                        final List<String> stringList = new ArrayList<>();
                         readWithException(dis.readInt(), () -> stringList.add(dis.readUTF()));
                         resume.putSection(sectionType, new ListSection(stringList));
                         break;
                     case EDUCATION, EXPERIENCE:
-                        final List<Company> companyList = new ArrayList<Company>();
+                        final List<Company> companyList = new ArrayList<>();
                         readWithException(dis.readInt(), () -> {
                             String name = dis.readUTF();
                             String website = (dis.readInt() == 0) ? null : dis.readUTF();
-                            final List<Company.Period> periodList = new ArrayList<Company.Period>();
+                            final List<Company.Period> periodList = new ArrayList<>();
                             readWithException(dis.readInt(), () -> {
                                 periodList.add(new Company.Period(dis.readUTF(), (dis.readInt() == 0) ? null : dis.readUTF(), LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF())));
                             });
@@ -53,14 +53,14 @@ public class DataStreamSerialization implements SerializationStrategy {
 
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            writeWithException(contacts.entrySet(), (FunctionWriter<Map.Entry<ContactType, String>>) (entry) -> {
+            writeWithException(contacts.entrySet(), (entry) -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             });
 
             Map<SectionType, Section> sections = resume.getSections();
             dos.writeInt(sections.size());
-            writeWithException(sections.entrySet(), (FunctionWriter<Map.Entry<SectionType, Section>>) (entry) -> {
+            writeWithException(sections.entrySet(), (entry) -> {
                 dos.writeUTF(entry.getKey().name());
                 switch (entry.getKey()) {
                     case OBJECTIVE, PERSONAL:
@@ -69,12 +69,12 @@ public class DataStreamSerialization implements SerializationStrategy {
                     case ACHIEVEMENTS, QUALIFICATIONS:
                         List<String> list = ((ListSection) entry.getValue()).getList();
                         dos.writeInt(list.size());
-                        writeWithException(list, (FunctionWriter<String>) dos::writeUTF);
+                        writeWithException(list, dos::writeUTF);
                         break;
                     case EDUCATION, EXPERIENCE:
                         List<Company> companies = ((CompanySection) entry.getValue()).getList();
                         dos.writeInt(companies.size());
-                        writeWithException(companies, (FunctionWriter<Company>) (company) -> {
+                        writeWithException(companies, (company) -> {
                             dos.writeUTF(company.getName());
                             if (company.getWebsite() == null) {
                                 dos.writeInt(0);
@@ -85,7 +85,7 @@ public class DataStreamSerialization implements SerializationStrategy {
 
                             List<Company.Period> periods = (company.getList());
                             dos.writeInt(periods.size());
-                            writeWithException(periods, (FunctionWriter<Company.Period>) (period) -> {
+                            writeWithException(periods, (period) -> {
                                 dos.writeUTF(period.getTitle());
                                 if (period.getDescription() == null) {
                                     dos.writeInt(0);
@@ -105,7 +105,7 @@ public class DataStreamSerialization implements SerializationStrategy {
         }
     }
 
-    private <T> void writeWithException(Collection<T> collection, FunctionWriter action) throws IOException {
+    private <T> void writeWithException(Collection<T> collection, FunctionWriter<T> action) throws IOException {
         Objects.requireNonNull(action);
         for (T t : collection) {
             action.accept(t);
