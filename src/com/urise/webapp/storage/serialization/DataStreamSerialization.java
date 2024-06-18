@@ -11,10 +11,7 @@ public class DataStreamSerialization implements SerializationStrategy {
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             final Resume resume = new Resume(dis.readUTF(), dis.readUTF());
-            final int resumeCount = dis.readInt();
-            for (int i = 0; i < resumeCount; i++) {
-                resume.putContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
+            readWithException(dis.readInt(), () -> resume.putContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
 
             final int sectionCount = dis.readInt();
             for (int i = 0; i < sectionCount; i++) {
@@ -25,25 +22,20 @@ public class DataStreamSerialization implements SerializationStrategy {
                         break;
                     case ACHIEVEMENTS, QUALIFICATIONS:
                         final List<String> stringList = new ArrayList<String>();
-                        int listCount = dis.readInt();
-                        for (int l = 0; l < listCount; l++) {
-                            stringList.add(dis.readUTF());
-                        }
+                        readWithException(dis.readInt(), () -> stringList.add(dis.readUTF()));
                         resume.putSection(sectionType, new ListSection(stringList));
                         break;
                     case EDUCATION, EXPERIENCE:
                         final List<Company> companyList = new ArrayList<Company>();
-                        int companyCount = dis.readInt();
-                        for (int c = 0; c < companyCount; c++) {
+                        readWithException(dis.readInt(), () -> {
                             String name = dis.readUTF();
                             String website = (dis.readInt() == 0) ? null : dis.readUTF();
                             final List<Company.Period> periodList = new ArrayList<Company.Period>();
-                            int periodCount = dis.readInt();
-                            for (int p = 0; p < periodCount; p++) {
+                            readWithException(dis.readInt(), () -> {
                                 periodList.add(new Company.Period(dis.readUTF(), (dis.readInt() == 0) ? null : dis.readUTF(), LocalDate.parse(dis.readUTF()), LocalDate.parse(dis.readUTF())));
-                            }
+                            });
                             companyList.add(new Company(name, website, periodList));
-                        }
+                        });
                         resume.putSection(sectionType, new CompanySection(companyList));
                         break;
                     default:
@@ -118,6 +110,13 @@ public class DataStreamSerialization implements SerializationStrategy {
         Objects.requireNonNull(action);
         for (T t : collection) {
             action.accept(t);
+        }
+    }
+
+    private void readWithException(int count, FunctionReader action) throws IOException {
+        Objects.requireNonNull(action);
+        for (int i = 0; i < count; i++) {
+            action.accept();
         }
     }
 }
