@@ -7,6 +7,11 @@ public class MainConcurrency {
     private static final Object LOCK_A = new Object();
     private static final Object LOCK_B = new Object();
 
+    public static void main(String[] args) {
+        StartThread("First Thread", LOCK_A, LOCK_B);
+        StartThread("Second Thread", LOCK_B, LOCK_A);
+    }
+
     private static void StartThread(String name, Object lockObject1, Object lockObject2) {
         new Thread(() -> {
             System.out.println(currentThread().getName() + " started");
@@ -27,10 +32,5 @@ public class MainConcurrency {
             System.out.println(currentThread().getName() + " has unlocked " + lockObject1);
             System.out.println(currentThread().getName() + " is done");
         }, name).start();
-    }
-
-    public static void main(String[] args) {
-        StartThread("First Thread", LOCK_A, LOCK_B);
-        StartThread("Second Thread", LOCK_B, LOCK_A);
     }
 }
