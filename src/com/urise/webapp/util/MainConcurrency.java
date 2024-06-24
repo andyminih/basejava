@@ -10,7 +10,7 @@ public class MainConcurrency {
     private static void StartThread(String name, Object lockObject1, Object lockObject2) {
         new Thread(() -> {
             System.out.println(currentThread().getName() + " started");
-            System.out.println(currentThread().getName() + " is about to lock " + lockObject1.toString());
+            System.out.println(currentThread().getName() + " is about to lock " + lockObject1);
             synchronized (lockObject1) {
                 System.out.println(currentThread().getName() + " has locked " + lockObject1);
                 try {
@@ -18,7 +18,7 @@ public class MainConcurrency {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(currentThread().getName() + " is about to lock " + lockObject2.toString());
+                System.out.println(currentThread().getName() + " is about to lock " + lockObject2);
                 synchronized (lockObject2) {
                     System.out.println(currentThread().getName() + " has locked " + lockObject2);
                 }
