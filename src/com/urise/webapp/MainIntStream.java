@@ -1,6 +1,5 @@
 package com.urise.webapp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,8 +20,7 @@ public class MainIntStream {
 
         System.out.println("Сумма = " + sum);
 
-        return integers.stream().mapToInt(Integer::intValue)
-                .filter(p -> ((sum % 2 == 0) == (p % 2 != 0))).collect(ArrayList::new, List::add, List::addAll);
+        return integers.stream().filter(p -> ((sum % 2 == 0) == (p % 2 != 0))).toList();
     }
 
     private static int minValue(int[] values) {
