@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.DateUtil;
 import com.urise.webapp.util.LocalDateAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,8 +11,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import static com.urise.webapp.util.DateUtil.NOW;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
@@ -110,7 +109,7 @@ public class Company implements Serializable {
         }
 
         public Period(String title, String description, LocalDate start) {
-            this(title, description, start, NOW);
+            this(title, description, start, DateUtil.NOW);
         }
 
         public String getTitle() {
