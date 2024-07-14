@@ -12,13 +12,14 @@ import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 public abstract class AbstractStorageTest {
     protected final static File STORAGE_DIR = Config.getInstance().getStorageDir();
-    private static final String UUID_1 = "uuid1";
-    private static final String UUID_2 = "uuid2";
-    private static final String UUID_3 = "uuid3";
-    private static final String UUID_4 = "uuid4";
+    private static final String UUID_1 = String.valueOf(UUID.randomUUID());
+    private static final String UUID_2 = String.valueOf(UUID.randomUUID());
+    private static final String UUID_3 = String.valueOf(UUID.randomUUID());
+    private static final String UUID_4 = String.valueOf(UUID.randomUUID());
     private static final String UUID_NOT_EXISTS = "uuid_not_exists";
     private static final String FULLNAME_1 = "FullName1";
     private static final String FULLNAME_2 = "FullName2";
@@ -96,13 +97,13 @@ public abstract class AbstractStorageTest {
         if (storageIsArray()) {
             storage.clear();
             for (int i = 0; i < 5; i++) {
-                storage.save(new Resume("uuid_" + i));
+                storage.save(new Resume(String.valueOf(UUID.randomUUID())));
             }
             Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume(FULLNAME_NOT_EXISTS)));
         }
     }
 
-    private boolean storageIsArray() throws NoSuchFieldException {
+    private boolean storageIsArray(){
         final Field[] fields = storage.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.getName().equals("storage")) {
