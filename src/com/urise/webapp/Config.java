@@ -11,9 +11,6 @@ import java.util.Properties;
 public class Config {
     private static final File PROPS = new File(".\\config\\resumes.properties");
     private static final Config INSTANCE = new Config();
-    //    private static String dbConnection;
-//    private static String dbPassword;
-//    private static String dbUser;
     private final File storageDir;
 
     private final SqlStorage storage;
