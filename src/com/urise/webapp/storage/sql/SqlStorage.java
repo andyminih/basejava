@@ -23,11 +23,11 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-            sqlHelper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES(?,?)", r.getUuid(), (preparedStatement) -> {
-                preparedStatement.setString(1, r.getUuid());
-                preparedStatement.setString(2, r.getFullName());
-                preparedStatement.execute();
-            });
+        sqlHelper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES(?,?)", r.getUuid(), (preparedStatement) -> {
+            preparedStatement.setString(1, r.getUuid());
+            preparedStatement.setString(2, r.getFullName());
+            preparedStatement.execute();
+        });
     }
 
     @Override

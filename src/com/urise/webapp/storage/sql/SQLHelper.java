@@ -12,9 +12,8 @@ import java.util.Objects;
 
 public class SQLHelper {
     private final static String PSQL_UNIQUE_VIOLATION_ERROR = "23505";
-    private final Connection connection;
-
     public final ConnectionFactory connectionFactory;
+    private final Connection connection;
 
     public SQLHelper(String dbUrl, String dbUser, String dbPassword) {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
