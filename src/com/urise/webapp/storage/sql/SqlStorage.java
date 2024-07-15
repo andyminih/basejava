@@ -4,7 +4,6 @@ import com.urise.webapp.exception.NotExistsStorageException;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.Storage;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +17,14 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        sqlHelper.executeQuery("DELETE FROM resume", null, PreparedStatement::execute);
+        sqlHelper.executeQuery("DELETE FROM resume", preparedStatement -> {
+            preparedStatement.execute();
+        });
     }
 
     @Override
     public void save(Resume r) {
-        sqlHelper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES(?,?)", r.getUuid(), (preparedStatement) -> {
+        sqlHelper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES(?,?)", (preparedStatement) -> {
             preparedStatement.setString(1, r.getUuid());
             preparedStatement.setString(2, r.getFullName());
             preparedStatement.execute();
@@ -45,7 +46,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.executeQuery("DELETE FROM resume r WHERE r.uuid = ?", null, (preparedStatement) -> {
+        sqlHelper.executeQuery("DELETE FROM resume r WHERE r.uuid = ?", (preparedStatement) -> {
             preparedStatement.setString(1, uuid);
             if (preparedStatement.executeUpdate() == 0) {
                 throw new NotExistsStorageException(uuid);
@@ -55,7 +56,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.executeQuery("UPDATE resume SET full_name = ? WHERE uuid = ?", null, (preparedStatement) -> {
+        sqlHelper.executeQuery("UPDATE resume SET full_name = ? WHERE uuid = ?", (preparedStatement) -> {
             preparedStatement.setString(1, resume.getFullName());
             preparedStatement.setString(2, resume.getUuid());
             if (preparedStatement.executeUpdate() == 0) {
