@@ -93,7 +93,7 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void saveOverflow() throws NoSuchFieldException {
+    public void saveOverflow() {
         if (storageIsArray()) {
             storage.clear();
             for (int i = 0; i < 5; i++) {
