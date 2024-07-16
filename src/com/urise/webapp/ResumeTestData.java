@@ -12,9 +12,9 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         final Resume resume = new Resume(uuid, fullName);
-//        resume.putContact(ContactType.PHONE, "+7(921) 855-0482");
-//        resume.putContact(ContactType.SKYPE, "skype:grigory.kislin");
-//
+        resume.putContact(ContactType.PHONE, "+7(921) 855-0482");
+        resume.putContact(ContactType.SKYPE, "skype:grigory.kislin");
+
 //        resume.putSection(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
 //        resume.putSection(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 //
@@ -60,7 +60,7 @@ public class ResumeTestData {
 
         final ResumeTestData test = new ResumeTestData();
 
-        System.out.println(test.toString());
+        System.out.println(test);
     }
 
     private String getContacts(Resume resume) {
@@ -91,7 +91,7 @@ public class ResumeTestData {
                 }
                 stringBuilder.append(sectionType.getTitle());
                 stringBuilder.append("\n\t");
-                stringBuilder.append(section.toString());
+                stringBuilder.append(section);
                 stringBuilder.append("\n");
             }
         }
@@ -100,14 +100,10 @@ public class ResumeTestData {
 
     @Override
     public String toString() {
-        final StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(resume.getFullName());
-        stringBuilder.append("\n\n");
-        stringBuilder.append(getContacts(resume));
-        stringBuilder.append("\n\n");
-        stringBuilder.append(getSections(resume));
-
-        return stringBuilder.toString();
+        return resume.getFullName() +
+                "\n\n" +
+                getContacts(resume) +
+                "\n\n" +
+                getSections(resume);
     }
 }
