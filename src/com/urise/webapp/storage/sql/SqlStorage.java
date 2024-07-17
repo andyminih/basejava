@@ -103,7 +103,7 @@ public class SqlStorage implements Storage {
             return resumes;
         });
 
-        sqlHelper.executeQuery("SELECT * FROM contact", (preparedStatement) -> {
+        sqlHelper.executeQuery("SELECT * FROM contact ORDER BY resume_uuid ASC", (preparedStatement) -> {
             ResultSet resultSet = preparedStatement.executeQuery();
             Resume resume = null;
             while (resultSet.next()) {
