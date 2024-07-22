@@ -18,7 +18,7 @@ public class MainIntStream {
     private static List<Integer> oddOrEven(List<Integer> integers) {
         final int sum = integers.stream().mapToInt(Integer::intValue).sum();
 
-        System.out.println("Ð¡ÑƒÐ¼Ð¼Ð° = " + sum);
+        System.out.println("Ñóììà = " + sum);
 
         return integers.stream().filter(p -> ((sum % 2 == 0) == (p % 2 != 0))).toList();
     }
