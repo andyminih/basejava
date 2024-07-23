@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
-    private static final File PROPS = new File(System.getProperty("homeDir") +"\\config\\resumes.properties");
+    private static final File PROPS = new File(getRootDir(), "\\config\\resumes.properties");
     private static final Config INSTANCE = new Config();
     private final File storageDir;
 
@@ -24,6 +24,11 @@ public class Config {
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
+    }
+
+    private static String getRootDir() {
+        String propValue = System.getProperty("homeDir");
+        return propValue == null ? "." : propValue;
     }
 
     public static Config getInstance() {
