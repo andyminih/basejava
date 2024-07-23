@@ -17,6 +17,11 @@ public class SqlStorage implements Storage {
     private final SQLHelper sqlHelper;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
         sqlHelper = new SQLHelper(dbUrl, dbUser, dbPassword);
     }
 
@@ -106,13 +111,9 @@ public class SqlStorage implements Storage {
             return resumes;
         });
 
-        getAllResumesDataFromTable(resumeList, "contact", (Resume resume, ResultSet resultSet) -> {
-            resume.putContact(ContactType.valueOf(resultSet.getString("type")), resultSet.getString("value"));
-        });
+        getAllResumesDataFromTable(resumeList, "contact", (Resume resume, ResultSet resultSet) -> resume.putContact(ContactType.valueOf(resultSet.getString("type")), resultSet.getString("value")));
 
-        getAllResumesDataFromTable(resumeList, "section", (Resume resume, ResultSet resultSet) -> {
-            putSection(resume, SectionType.valueOf(resultSet.getString("type")), resultSet.getString("value"));
-        });
+        getAllResumesDataFromTable(resumeList, "section", (Resume resume, ResultSet resultSet) -> putSection(resume, SectionType.valueOf(resultSet.getString("type")), resultSet.getString("value")));
 
         return resumeList;
     }
