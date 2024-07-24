@@ -3,6 +3,8 @@ package com.urise.webapp.web;
 import com.urise.webapp.Config;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.sql.SqlStorage;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +13,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class ResumeServlet extends HttpServlet {
-    private final SqlStorage storage = Config.getInstance().getStorage();
+    private SqlStorage storage;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        storage = Config.getInstance().getStorage();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
