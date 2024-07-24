@@ -104,22 +104,22 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        final List<Resume> resumeList = sqlHelper.executeQuery("SELECT * FROM resume ORDER BY full_name ASC, uuid ASC", (preparedStatement) -> {
+        final Map<String, Resume> resumeMap = sqlHelper.executeQuery("SELECT * FROM resume ORDER BY full_name ASC, uuid ASC", (preparedStatement) -> {
             ResultSet resultSet = preparedStatement.executeQuery();
-            Map<String, Resume> resumeMap = new LinkedHashMap<>();
+            Map<String, Resume> map = new LinkedHashMap<>();
             while (resultSet.next()) {
-                resumeMap.put(resultSet.getString("uuid"), new Resume(resultSet.getString("uuid"), resultSet.getString("full_name")));
+                map.put(resultSet.getString("uuid"), new Resume(resultSet.getString("uuid"), resultSet.getString("full_name")));
             }
-            return new ArrayList<>(resumeMap.values());
+            return map;
         });
 
-        getAllResumesDataFromTable(resumeList, "contact",
+        getAllResumesDataFromTable(resumeMap, "contact",
                 (Resume resume, ResultSet resultSet) -> resume.putContact(ContactType.valueOf(resultSet.getString("type")), resultSet.getString("value")));
 
-        getAllResumesDataFromTable(resumeList, "section",
+        getAllResumesDataFromTable(resumeMap, "section",
                 (Resume resume, ResultSet resultSet) -> putSection(resume, SectionType.valueOf(resultSet.getString("type")), resultSet.getString("value")));
 
-        return resumeList;
+        return new ArrayList<>(resumeMap.values());
     }
 
     @Override
@@ -165,24 +165,33 @@ public class SqlStorage implements Storage {
         });
     }
 
-    private void getAllResumesDataFromTable(List<Resume> resumeList, String tableName, BiConsumerNoException<Resume, ResultSet> resumeConsumer) {
-        sqlHelper.executeQuery("SELECT * FROM " + tableName + " ORDER BY resume_uuid ASC", (preparedStatement) -> {
+    private void getAllResumesDataFromTable(Map<String, Resume> resumeMap, String tableName, BiConsumerNoException<Resume, ResultSet> resumeConsumer) {
+        sqlHelper.executeQuery("SELECT * FROM " + tableName, (preparedStatement) -> {
             ResultSet resultSet = preparedStatement.executeQuery();
-            Resume resume = null;
             while (resultSet.next()) {
-                if (resume == null || !resume.getUuid().equals(resultSet.getString("resume_uuid"))) {
-                    resume = (resumeList.stream().filter(r -> {
-                        try {
-                            return r.getUuid().equals(resultSet.getString("resume_uuid"));
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).toList().getFirst());
-                }
+                Resume resume = resumeMap.get(resultSet.getString("resume_uuid"));
                 resumeConsumer.accept(resume, resultSet);
             }
         });
     }
+//    private void getAllResumesDataFromTable(List<Resume> resumeList, String tableName, BiConsumerNoException<Resume, ResultSet> resumeConsumer) {
+//        sqlHelper.executeQuery("SELECT * FROM " + tableName + " ORDER BY resume_uuid ASC", (preparedStatement) -> {
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//            Resume resume = null;
+//            while (resultSet.next()) {
+//                if (resume == null || !resume.getUuid().equals(resultSet.getString("resume_uuid"))) {
+//                    resume = (resumeList.stream().filter(r -> {
+//                        try {
+//                            return r.getUuid().equals(resultSet.getString("resume_uuid"));
+//                        } catch (SQLException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }).toList().getFirst());
+//                }
+//                resumeConsumer.accept(resume, resultSet);
+//            }
+//        });
+//    }
 
     private void deleteResumeData(Connection connection, Resume resume, String tableName) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + tableName + " WHERE resume_uuid = ?")) {
