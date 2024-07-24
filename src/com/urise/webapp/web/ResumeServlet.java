@@ -1,5 +1,6 @@
 package com.urise.webapp.web;
 
+import com.urise.webapp.Config;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.sql.SqlStorage;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +11,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class ResumeServlet extends HttpServlet {
+    private final SqlStorage storage = Config.getInstance().getStorage();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
@@ -24,7 +27,6 @@ public class ResumeServlet extends HttpServlet {
     }
 
     private void writeAllResumes(PrintWriter out) {
-        SqlStorage storage = com.urise.webapp.Config.getInstance().getStorage();
         out.println("<html><head" +
                 "meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8>\"</head>");
         out.println("<table border=\"1\">");
