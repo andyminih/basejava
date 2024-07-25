@@ -1,5 +1,5 @@
 
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <html>
 <head>
@@ -8,7 +8,7 @@
     <title>Список всех резюме</title>
 </head>
 <body>
-<jsp:include page="WEB-INF/jsp/fragments/header.jsp"/>
+<jsp:include page="fragments/header.jsp"/>
 <section>
     <table>
         <tr>
@@ -27,6 +27,6 @@
         </c:forEach>
     </table>
 </section>
-<jsp:include page="WEB-INF/jsp/fragments/footer.jsp"/>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>
