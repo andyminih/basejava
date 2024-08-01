@@ -20,10 +20,16 @@ public class Resume implements Comparable<Resume>, Serializable {
     private final static long serialVersionUID = 1L;
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
     private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
-    private String uuid;
+    private final String uuid;
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     private String fullName;
 
     public Resume() {
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public Resume(String fullName) {

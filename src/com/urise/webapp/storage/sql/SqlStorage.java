@@ -56,9 +56,11 @@ public class SqlStorage implements Storage {
                         throw new NotExistsStorageException(uuid);
                     }
                     Resume r = new Resume(uuid, resultSet.getString(("full_name")));
-                    do {
-                        r.putContact(ContactType.valueOf(resultSet.getString(("type"))), resultSet.getString(("value")));
-                    } while (resultSet.next());
+                    if (resultSet.getString(("type")) != null) {
+                        do {
+                            r.putContact(ContactType.valueOf(resultSet.getString(("type"))), resultSet.getString(("value")));
+                        } while (resultSet.next());
+                    }
 
                     return r;
                 });
@@ -174,24 +176,6 @@ public class SqlStorage implements Storage {
             }
         });
     }
-//    private void getAllResumesDataFromTable(List<Resume> resumeList, String tableName, BiConsumerNoException<Resume, ResultSet> resumeConsumer) {
-//        sqlHelper.executeQuery("SELECT * FROM " + tableName + " ORDER BY resume_uuid ASC", (preparedStatement) -> {
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            Resume resume = null;
-//            while (resultSet.next()) {
-//                if (resume == null || !resume.getUuid().equals(resultSet.getString("resume_uuid"))) {
-//                    resume = (resumeList.stream().filter(r -> {
-//                        try {
-//                            return r.getUuid().equals(resultSet.getString("resume_uuid"));
-//                        } catch (SQLException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }).toList().getFirst());
-//                }
-//                resumeConsumer.accept(resume, resultSet);
-//            }
-//        });
-//    }
 
     private void deleteResumeData(Connection connection, Resume resume, String tableName) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + tableName + " WHERE resume_uuid = ?")) {
