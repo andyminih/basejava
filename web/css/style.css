@@ -20,7 +20,7 @@ table, th, td {
 dl {
     background: none repeat scroll 0 0 #FAFAFA;
     margin: 8px 0;
-    padding:  0;
+    padding: 0;
 }
 
 dt {
@@ -28,8 +28,27 @@ dt {
     width: 170px;
 }
 
-dd{
+dd {
     display: inline-block;
     margin-left: 8px;
     vertical-align: top;
+}
+
+.periodEntry_description {
+    margin-left: 150px;
+    width: 550px;
+}
+
+.periodEntry_period {
+    margin-left: 50px;
+}
+
+.section_title {
+    margin-left: 50px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.periodEntry_period_edit {
+    margin-left: 130px;
 }

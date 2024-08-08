@@ -1,5 +1,6 @@
 <%@ page import="com.urise.webapp.model.ContactType" %>
 <%@ page import="com.urise.webapp.model.SectionType" %>
+<%@ page import="com.urise.webapp.util.DateUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <html>
@@ -42,25 +43,95 @@
                         </label>
                     </c:when>
                     <c:when test="${sectionType.name()==SectionType.ACHIEVEMENTS || sectionType.name()==SectionType.QUALIFICATIONS}">
-                        <c:set var="section" value="${(resume.getSection(sectionType))}"/>
+                        <br>
+                        <c:set var="listSection" value="${(resume.getSection(sectionType))}"/>
                         <c:set var="text" value=""/>
-                        <c:if test="${section!=null}">
-                            <jsp:useBean id="section" type="com.urise.webapp.model.ListSection"/>
+                        <c:if test="${listSection!=null}">
+                            <jsp:useBean id="listSection" type="com.urise.webapp.model.ListSection"/>
                             <label>
-                                <textarea name="${sectionType.name()}" cols="120"
-                                          rows="10"><%= section == null ? "" : String.join("\n", section.getList())%></textarea>
+                                <textarea name="${sectionType.name()}" cols="117"
+                                          rows="7"><%= listSection == null ? "" : String.join("\n", listSection.getList())%></textarea>
                             </label>
                         </c:if>
-                        <c:if test="${section==null}">
+                        <c:if test="${listSection==null}">
                             <label>
                                 <textarea name="${sectionType.name()}" cols="120" rows="10"></textarea>
                             </label>
                         </c:if>
                     </c:when>
+                    <c:when test="${sectionType.name()==SectionType.EXPERIENCE || sectionType.name()==SectionType.EDUCATION}">
+                        <br>
+                        <button type="submit" name="addCompanyTo${sectionType.name()}">Добавить организацию</button>
+                        <br><br>
+                        <c:set var="companySection" value="${resume.getSection(sectionType)}"/>
+                        <c:if test="${companySection!=null}">
+                            <jsp:useBean id="companySection" type="com.urise.webapp.model.CompanySection"/>
+                            <c:if test="${companySection.list!=null}">
+                                <c:forEach var="company" items="${companySection.list}" varStatus="companyCounter">
+                                    <br>
+                                    <hr>
+                                    <dl>
+                                        <dt>Организация</dt>
+                                        <dd><label><input type="text" name="${sectionType.name()}_name" size=80
+                                                          value="${company.name}"></label></dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>Web-сайт</dt>
+                                        <dd><label><input type="text" name="${sectionType.name()}_website" size=80
+                                                          value="${company.website}"></label></dd>
+                                    </dl>
+                                    <br>
+                                    <div class="periodEntry_period_edit">
+                                        <h5>Периоды</h5>
+                                        <button type="submit"
+                                                name="addPeriodTo${sectionType.name()}${companyCounter.index}">Добавить
+                                            период
+                                        </button>
+                                        <br><br>
+                                        <c:forEach var="period" items="${company.list}">
+                                            <br>
+                                            <jsp:useBean id="period" type="com.urise.webapp.model.Company.Period"/>
+                                            <dl>
+                                                <dt>Начало</dt>
+                                                <dd><label><input type="text"
+                                                                  name="${sectionType.name()}${companyCounter.index}_periodStart"
+                                                                  size=7
+                                                                  value="${period.start == null || period.start.equals(DateUtil.NOW) ? "" : DateUtil.formatMMyyyy(period.start)}"
+                                                                  placeholder="MM/yyyy"></label>
+                                                </dd>
+                                                <br>
+                                                <dt>Окончание</dt>
+                                                <dd><label><input type="text"
+                                                                  name="${sectionType.name()}${companyCounter.index}_periodEnd"
+                                                                  size=7
+                                                                  value="${period.end == null || period.end.equals(DateUtil.NOW) ? "" : DateUtil.formatMMyyyy(period.end)}"
+                                                                  placeholder="MM/yyyy"></label>
+                                                </dd>
+                                                <br>
+                                                <dt>Должность</dt>
+                                                <dd><label><input type="text"
+                                                                  name="${sectionType.name()}${companyCounter.index}_periodTitle"
+                                                                  size=61 value="${period.title}"></label>
+                                                </dd>
+                                                <br>
+                                                <dt>Описание</dt>
+                                                <dd><label><textarea
+                                                        name="${sectionType.name()}${companyCounter.index}_periodDescription"
+                                                        cols="57"
+                                                        rows="10">${period.description}</textarea></label>
+                                                </dd>
+                                                <br>
+                                            </dl>
+                                        </c:forEach>
+                                    </div>
+                                </c:forEach>
+                            </c:if>
+                        </c:if>
+                    </c:when>
                 </c:choose>
             </dl>
         </c:forEach>
-        <button type="submit" onclick="oncliskSave(this)">Сохранить</button>
+        <button type="submit" onclick="onclickSave(this)">Сохранить</button>
         <button type="button" onclick="window.history.back()">Отменить</button>
     </form>
 </section>

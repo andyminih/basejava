@@ -45,3 +45,47 @@ CREATE UNIQUE INDEX IF NOT EXISTS contact_uuid_type_index
     (resume_uuid COLLATE pg_catalog."default" ASC NULLS LAST, type COLLATE pg_catalog."default" ASC NULLS LAST)
     INCLUDE(resume_uuid)
     TABLESPACE pg_default;
+
+-- Table: public.section
+
+-- DROP TABLE IF EXISTS public.section;
+
+CREATE TABLE IF NOT EXISTS public.section
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    type text COLLATE pg_catalog."default" NOT NULL,
+    value text COLLATE pg_catalog."default" NOT NULL,
+    resume_uuid character(36) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT section_pk PRIMARY KEY (id),
+    CONSTRAINT section_resume_uuid_fk FOREIGN KEY (resume_uuid)
+        REFERENCES public.resume (uuid) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.section
+    OWNER to postgres;
+
+-- Table: public.section
+
+-- DROP TABLE IF EXISTS public.section;
+
+CREATE TABLE IF NOT EXISTS public.section
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    type text COLLATE pg_catalog."default" NOT NULL,
+    value text COLLATE pg_catalog."default" NOT NULL,
+    resume_uuid character(36) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT section_pk PRIMARY KEY (id),
+    CONSTRAINT section_resume_uuid_fk FOREIGN KEY (resume_uuid)
+        REFERENCES public.resume (uuid) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.section
+    OWNER to postgres;

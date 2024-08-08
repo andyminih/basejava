@@ -3,6 +3,7 @@ package com.urise.webapp.storage.sql;
 import com.urise.webapp.exception.NotExistsStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.JsonParser;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -163,6 +164,9 @@ public class SqlStorage implements Storage {
                 case ACHIEVEMENTS, QUALIFICATIONS:
                     ps.setString(3, String.join("\n", ((ListSection) e.getValue()).getList()));
                     break;
+                case EXPERIENCE, EDUCATION:
+                    ps.setString(3, JsonParser.write((CompanySection) e.getValue()));
+                    break;
             }
         });
     }
@@ -188,10 +192,8 @@ public class SqlStorage implements Storage {
         Section section = switch (sectionType) {
             case PERSONAL, OBJECTIVE -> new TextSection(value);
             case ACHIEVEMENTS, QUALIFICATIONS -> new ListSection(Arrays.stream(value.split("\n")).toList());
-            default -> null;
+            case EDUCATION, EXPERIENCE -> JsonParser.read(value, CompanySection.class);
         };
         resume.putSection(sectionType, section);
     }
-
-
 }
